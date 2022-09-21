@@ -22,7 +22,7 @@ module.exports = {
       generator: {
         filename: 'fonts/[name][ext][query]'
       }
-    }
+    },    
     ]
   }
 };

@@ -1,0 +1,1 @@
+var myApp;(()=>{var r={495:r=>{r.exports={sum:function(r,t){return r+t},shipFactory:r=>r}}},t={};var p=function p(o){var e=t[o];if(void 0!==e)return e.exports;var n=t[o]={exports:{}};return r[o](n,n.exports,p),n.exports}(495);myApp=p})();
