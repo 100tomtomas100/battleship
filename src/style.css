@@ -1,3 +1,30 @@
+* {
+    margin: 0;
+    padding: 0;
+   
+    box-sizing: border-box;
+}
+:root {
+    --box-size: 400px
+}
 body {
-    background-color:  black;
+    background-color:  white
+}
+#place-board {
+    width: var(--box-size);
+    height: var(--box-size);
+    display: grid;    
+    border: solid;
+}
+.square {
+    position: relative;
+    
+}
+.square p {
+    height: 100%;
+    width: 100%;
+    font-size: calc(var(--box-size)/10) ;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
