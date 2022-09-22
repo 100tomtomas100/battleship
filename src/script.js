@@ -23,7 +23,7 @@ const shipFactory = (coor, blSq) => {
   let sunkBl = blSq;
   for(let i = 0; shipCoor.length > i; i++){
     let colorShip = document.getElementById(coor[i]);
-    colorShip.style.backgroundColor = "black";
+    colorShip.style.backgroundColor = "green";
   }
   return {shipCoor, hit, sunk, sunkBl} 
 };
@@ -46,6 +46,15 @@ const gameBoard = () => {
         }; 
         if (ship.hit.length === ship.shipCoor.length) {
           ship.sunk = true;
+          for(let i = 0; ship.sunkBl.length > i; i++) {            
+            let sq = document.getElementById(ship.sunkBl[i])
+            if (!sq.hasChildNodes()) {
+              let text = document.createElement("p");
+              sq.appendChild(text);
+              text.style.position = "absolute";            
+              text.innerHTML = "&#9679;"
+            }            
+          }
         }; 
       };
     };
@@ -139,31 +148,39 @@ const player = (name) => {
     let coo = shipCoo();
 
     // a square around a ship to be blocked from creating new ships
+    // coordinates for the marked spaces around shot down ship
     
     const blockSq = (() => { 
       let block = [];     
       if(placement === "horizontal") {
         for (let i = 0; coo.length > i; i++) { 
+          let secNr = Number(coo[i].toString()[coo[i].toString().length -1]);
           if(i === 0) {
-            let block1 = coo[i] - 1;
+            if(secNr !== 1){
+              let block1 = coo[i] - 1;
+              let block10 = coo[i] + 9;
+              let block9 = coo[i] - 11;
+              block.push(block1, block10, block9);
+            }             
             let block2 = coo[i] - 10;
-            let block3 = coo[i] + 10;
-            let block9 = coo[i] - 11;
-            let block10 = coo[i] + 9;
-            if(coo.length === 1) {              
+            let block3 = coo[i] + 10;            
+            if(coo.length === 1 && secNr !== 0) {              
               let block11 = coo[i] -9;
               let block12 = coo[i] + 1;
               let block13 = coo[i] + 11;
               block.push(block11, block12, block13);
             }
-            block.push(block1, block2, block3, block9, block10);
+            block.push(block2, block3);
           } else if (i === coo.length - 1) {
-            let block6 = coo[i] - 10;
-            let block7 = coo[i] + 1;
-            let block8 = coo[i] + 10;
-            let block14 = coo[i] - 9;
-            let block15 = coo[i] + 11;
-            block.push(block6, block7, block8, block14, block15);
+            if(secNr !== 0) {
+              let block7 = coo[i] + 1;
+              let block15 = coo[i] + 11;
+              let block14 = coo[i] - 9;
+              block.push(block7, block14, block15);
+            }
+            let block6 = coo[i] - 10;            
+            let block8 = coo[i] + 10;           
+            block.push(block6, block8);
           } else if (i > 0) {
             let block4 = coo[i] - 10;
             let block5 = coo[i] + 10;
@@ -172,33 +189,57 @@ const player = (name) => {
         }
       } else if (placement === "vertical") {
         for (let i = 0; coo.length > i; i++) {
+          let secNr = Number(coo[i].toString()[coo[i].toString().length -1]);
           if(i === 0) {
-            let block1 = coo[i] - 1;
-            let block2 = coo[i] - 10;
-            let block3 = coo[i] + 1;
-            let block9 = coo[i] - 11;
-            let block10 = coo[i] - 9;
-            if(coo.length === 1) {
-              let block11 = coo[i] + 9;
-              let block12 = coo[i] + 10;
-              let block13 = coo[i] + 11;
-              block.push(block11, block12, block13)
+            if (secNr !== 1) {
+              let block9 = coo[i] - 11;
+              let block1 = coo[i] - 1;
+              block.push(block1, block9)
             }
-            block.push(block1, block2, block3, block9, block10);
+            if(secNr !== 0) {
+              let block10 = coo[i] - 9;
+              let block3 = coo[i] + 1; 
+              block.push( block3, block10)
+            }
+            let block2 = coo[i] - 10;            
+            if(coo.length === 1) {
+              if(secNr !== 1) {
+                let block11 = coo[i] + 9;
+                block.push(block11);
+              };     
+              if(secNr !== 0) {
+                let block13 = coo[i] + 11;
+                block.push(block13);
+              }         
+              let block12 = coo[i] + 10;              
+              block.push(block12);
+            };
+            block.push(block2);
           } else if (i === coo.length -1) {
-            let block6 = coo[i] - 1;
-            let block7 = coo[i] + 1;
-            let block8 = coo[i] + 10;
-            let block14 = coo[i] + 9;
-            let block15 = coo[i] + 11
-            block.push(block6, block7, block8, block14, block15);
+            if (secNr !== 1) {
+              let block14 = coo[i] + 9;
+              let block6 = coo[i] - 1;
+              block.push(block6, block14)
+            };    
+            if (secNr !== 0) {
+              let block7 = coo[i] + 1;
+              let block15 = coo[i] + 11;
+              block.push(block7,block15)
+            };           
+            let block8 = coo[i] + 10;          
+            block.push(block8);
           } else if (i > 0) {
-            let block4 = coo[i] - 1;
-            let block5 = coo[i] + 1;
-            block.push(block4, block5);
-          }
-        }
-      }
+            if(secNr !== 1){
+              let block4 = coo[i] - 1;
+              block.push(block4)
+            };    
+            if(secNr !== 0) {
+              let block5 = coo[i] + 1;
+              block.push(block5);
+            };             
+          };
+        };
+      };
       let blockAvail = block.filter(nr => nr > 0 && nr < 101);
       removeCoo(blockAvail);
       return blockAvail;
@@ -243,24 +284,21 @@ const enemy = VScomputer()
 const shoot = (() => {
   let square = document.querySelectorAll(".square"); 
   square.forEach(sq => {
-    sq.addEventListener("click", () => {
-      let shot = enemy.playerBoard.receiveAttack(Number(sq.id));      
-      let text = document.createElement("p");
-      sq.appendChild(text);
-      text.style.position = "absolute";
-      console.log(shot)
-      if(shot === "missed"){
+    sq.addEventListener("click", () => {      
+      if (!sq.hasChildNodes()) {
+        let shot = enemy.playerBoard.receiveAttack(Number(sq.id));
+        let text = document.createElement("p");           
+        sq.appendChild(text);
+        text.style.position = "absolute";
+        if(shot === "missed" && text){
         text.innerHTML = "&#x2716;";
-      } else {
-        text.innerHTML = "&#x274C;";
-        text.style.fontSize = "150%"
-      }
-      
-      
-      
-  
+        } else {
+          text.innerHTML = "&#x274C;";
+          text.style.fontSize = "150%"
+        };  
+      };      
     });
-  })
+  });
 })();
 
 
