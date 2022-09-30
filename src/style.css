@@ -5,10 +5,18 @@
     box-sizing: border-box;
 }
 :root {
-    --box-size: 400px
+    --box-size: 300px;
 }
 body {
-    background-color:  white
+    background-color:  white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+   
+}
+#place-the-ships {
+    display: grid;
+    gap: 30px; 
 }
 #place-board {
     width: var(--box-size);
@@ -23,8 +31,33 @@ body {
 .square p {
     height: 100%;
     width: 100%;
-    font-size: calc(var(--box-size)/10) ;
+    font-size: calc(var(--box-size)/10);
     display: flex;
     justify-content: center;
     align-items: center;
 }
+#place-ships {
+    height: calc(var(--box-size)/1.5);
+    width: var(--box-size);
+    display: grid;
+}
+.shipChoice {
+    display: flex;
+    align-items: center;
+    font-size: calc((var(--box-size)/10)*0.8);
+    font-weight: 800;
+    gap: 15px;
+}
+
+.shipChoiceSQ {
+    height: calc((var(--box-size)/10)*0.97);
+    width: calc((var(--box-size)/10)*0.97);
+    background-color: green;
+}
+
+.hoveredSq {
+    background-color: black;
+}
+/*.dropSq {
+    background-color: green;;
+}*/
