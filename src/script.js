@@ -454,20 +454,20 @@ const player = (name, mode) => {
       // drag events for all the copies on the board
       const marksReDo = () => {
         let length = Object.keys(coordinates).length;
-        for(let i = 0; length > i; i++) {
-          let check = coordinates[Object.keys(coordinates)[i]].blocks
-          console.log(i)
           console.log(containerId)
-          check.forEach(c => {
+          // console.log( coordinates[Object.keys(coordinates)[0]].blocks) 
+        for(let i = 0; length > i; i++) {
+          let check = coordinates[Object.keys(coordinates)[i]].blocks;                         
+          check.forEach(c => {            
             if (document.getElementById(c).innerHTML === "" &&
-            Object.keys(coordinates)[i] != containerId) {            
-            let text = document.createElement("p");       
-            text.style.position = "absolute";            
-            text.innerHTML = "&#9679;";       
-            document.getElementById(c).appendChild(text); 
-            usedCoo.push(c);
+              Object.keys(coordinates)[i] != containerId) {            
+              let text = document.createElement("p");       
+              text.style.position = "absolute";            
+              text.innerHTML = "&#9679;";       
+              document.getElementById(c).appendChild(text); 
+              usedCoo.push(c);              
             };
-          });
+          });         
         };
       };
        
@@ -520,6 +520,7 @@ const player = (name, mode) => {
           });
           c.addEventListener("click", () => {
             let goodToTurn = true;
+            containerId = c.id;
             if (c.style.display === "flex") {
               let cooL = coordinates[c.id].coo.length;
               let nCoo =  [];
@@ -531,6 +532,7 @@ const player = (name, mode) => {
               };
               let oldCoo = coordinates[c.id].coo;
               let blocks = coordinates[c.id].blocks;
+             console.log(c.id)
              
               // remove ship coordinates from used
               oldCoo.forEach(s => {
@@ -546,11 +548,16 @@ const player = (name, mode) => {
                   if(b === usedCoo[i]) {                    
                     usedCoo.splice(i, 1);                                     
                   };
+                  let empty = document.getElementById(b);                  
+                  empty.innerHTML = "";             
                 };
               });
-              
+              marksReDo()
+              console.log(nCoo)
+              console.log(usedCoo)
               // check if any of the new coordinates are the same as used coordinates
               for (let i = 0; nCoo.length > i; i++) {
+                
                 usedCoo.forEach(u => {
                   if(nCoo[i] === u) {
                     goodToTurn = false;
@@ -559,7 +566,7 @@ const player = (name, mode) => {
               };
 
               //with the conditions met tilt the ship and add the new coordinates to used
-              if(nCoo.length === cooL && goodToTurn === true) {
+              if(nCoo.length === cooL && goodToTurn === true) {               
                 coordinates[c.id].coo = nCoo;
                 position = "vertical";
                 coordinates[c.id].position = position;             
@@ -575,18 +582,25 @@ const player = (name, mode) => {
                 nCoo.forEach(n => {
                   usedCoo.push(n)
                 });
-                marksReDo();
-                console.log(blocks)                
+                marksReDo();                              
               } else {
                 blocks.forEach(b => {
+                  console.log("else")
+                  console.log(goodToTurn)
+                  let check = document.getElementById(b);
                   usedCoo.push(b);
+                  if(check.innerHTML === "") {
+                    let text = document.createElement("p");       
+                    text.style.position = "absolute";            
+                    text.innerHTML = "&#9679;";       
+                    check.appendChild(text); 
+                  };
                 });
                 oldCoo.forEach(o => {
                   usedCoo.push(o);
-                })
-              };
-              
-              
+                });
+              };              
+            
               
             } else if (c.style.display === "grid") { 
               let goodToTurn = true;             
@@ -617,18 +631,22 @@ const player = (name, mode) => {
                       usedCoo.splice(i, 1);                                     
                     };
                   };
-                });
-                
+                  let empty = document.getElementById(b);                  
+                  empty.innerHTML = "";             
+                });     
+                marksReDo()           
+                console.log(blocks)
+                console.log(usedCoo)
                 // check if any of the new coordinates are the same as used coordinates
-                for (let i = 0; nCoo.length > i; i++) {
-                  usedCoo.forEach(u => {
-                    if(nCoo[i] === u) {
+                for (let i = 0; nCoo.length > i; i++) {                  
+                  usedCoo.forEach(u => {                    
+                    if(nCoo[i] === u) {                      
                       goodToTurn = false;
                     };
                   });
                 };
                    
-              const repos = () => {               
+              const repos = () => {                        
                 coordinates[c.id].coo = nCoo;
                 position = "horizontal";
                 coordinates[c.id].position = position;
@@ -645,7 +663,7 @@ const player = (name, mode) => {
                 nCoo.forEach(n => {
                   usedCoo.push(n)
                 });
-                marksReDo();  
+                marksReDo();                
               };      
               if(nCoo.length === cooL &&
                  ((nCoo[0]-1).toString())[1] <= 10 - ships[containerNr[9]-1]
@@ -656,7 +674,14 @@ const player = (name, mode) => {
                 repos();
               } else {
                 blocks.forEach(b => {
+                  let check = document.getElementById(b);
                   usedCoo.push(b);
+                  if(check.innerHTML === "") {                    
+                    let text = document.createElement("p");       
+                    text.style.position = "absolute";            
+                    text.innerHTML = "&#9679;";       
+                    check.appendChild(text); 
+                  };
                 });
                 oldCoo.forEach(o => {
                   usedCoo.push(o);
