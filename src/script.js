@@ -2,54 +2,105 @@
 // import sheet from './style.css' assert { type: 'css' };
 
 // construct new ship
-const shipFactory = (coor, blSq) => {
-  let shipCoor = coor;
+const shipFactory = (coor, blSq, player) => {  
+  let shipCoor = [];
+  let sunkBl = [];
+  if (player === "player1") {
+    shipCoor = coor;
+    sunkBl = blSq; 
+  } else {
+    for(let i = 0; coor.length > i; i++){
+      shipCoor.push(`p2${coor[i]}`);
+    };
+    for(let i = 0; blSq.length > i; i++){
+      sunkBl.push(`p2${blSq[i]}`);
+    };
+  };
+  
   let hit = [];
   let sunk = false;
-  let sunkBl = blSq;
+  
   for(let i = 0; shipCoor.length > i; i++){
-    let colorShip = document.getElementById(coor[i]);
-    colorShip.style.backgroundColor = "green";
-  }
+    let colorShip;
+    if(player === "player2" || player === "AI"){
+      colorShip = document.getElementById(`p2${coor[i]}`);
+    } else {
+      colorShip = document.getElementById(coor[i]);
+      colorShip.style.backgroundColor = "green";
+    };   
+    // colorShip.style.backgroundColor = "green";
+  };
   return {shipCoor, hit, sunk, sunkBl} 
 };
 
 // make and update the game board for player
-const gameBoard = () => {
-  
+const gameBoard = (player) => {  
   // create a board on the screen;
+  let container;
+  let number = 1;
+  let letters = ["", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
+  let coorLet;
+  let coorNum;
   const screenBoard = () => {
-  let container = document.getElementById("place-board");
-  container.style.gridTemplateColumns = "repeat(10, auto)";
-    for (let i = 1; i <= 10*10; i++) {    
-      let square = container.appendChild(document.createElement("div"));
-      square.id = i;
+    if(player === "player1"){     
+      container = document.getElementById("place-board");
+      coorLet = document.getElementById("coor-let");
+      coorNum = document.getElementById("coor-num");
+    } else if (player === "player2" || player === "AI") {      
+      container = document.getElementById("place-board2");
+      coorLet = document.getElementById("coor-let2");
+      coorNum = document.getElementById("coor-num2");
+    };
+    
+    container.style.gridTemplateColumns = "repeat(10, auto)";
+    for (let i = 1; i <= 10*10; i++) {      
+      let square = container.appendChild(document.createElement("div"));      
+      square.id;
+      if (player === "player2" || player === "AI"){       
+        square.id = `p2${i}`;
+      } else if (player === "player1"){       
+        square.id = i;
+      };
       square.className = "square";
       square.style.border = "thin solid black";
     };
-  };  
 
+    coorLet.style.gridTemplateColumns = "repeat(10, 1fr)";   
+    coorNum.style.gridTemplateRows = "repeat(10, 1fr)";
+    for(let i = 1; i <= 10; i++) {
+      let num = coorNum.appendChild(document.createElement("div"));
+      let lett = coorLet.appendChild(document.createElement("div"));
+      num.innerHTML = number;
+      lett.innerHTML = letters[i];
+      number += 1;
+    };
+  };  
+  
   //player`s ships and information
   let ships = [];
-  const createShip = (coor, blSq) => {
-    ships.push(shipFactory(coor, blSq));
+  const createShip = (coor, blSq, player) => {   
+    ships.push(shipFactory(coor, blSq, player));
   };
 
-  //all missed attacks
-  const missedAttack = [];
-
-  //receive enemy attack and check if the ship was hit or it was a missed attack
-  const receiveAttack = (shot, s = ships) => {    
-    let shipHit = false;
-    let checkShips = (ship) => {
+  //attacks
+  let missedAttack = [];
+  let shots = [];
+  let hit;
+ 
+  //receive enemy attack and check if the ship was hit or it was a missed attack  
+  const receiveAttack = (shot, s = ships) => { 
+    shots.push(shot);
+    let shipHit = false; 
+    let checkShips = (ship) => { 
+      if (ship.sunk === false) {      
       for (let j = 0; ship.shipCoor.length > j; j++) {              
-        if (ship.shipCoor[j] === shot){         
+        if (ship.shipCoor[j] == shot){         
           ship.hit.push(shot);         
           shipHit = true;
         }; 
         if (ship.hit.length === ship.shipCoor.length) {
           ship.sunk = true;
-
+          
           // background color of sunken ship
           for(let j = 0; ship.shipCoor.length > j; j++) {
             document.getElementById(ship.shipCoor[j]).style.backgroundColor = "green";
@@ -57,24 +108,42 @@ const gameBoard = () => {
 
           // mark squares around sunken ship
           for(let i = 0; ship.sunkBl.length > i; i++) {            
-            let sq = document.getElementById(ship.sunkBl[i])
+            let sq = document.getElementById(ship.sunkBl[i]);            
             if (!sq.hasChildNodes()) {
               let text = document.createElement("p");
               sq.appendChild(text);
               text.style.position = "absolute";            
               text.innerHTML = "&#9679;";
-            }            
-          }
+            };            
+          };
         }; 
       };
+      if (ship.hit.length === ship.shipCoor.length) {
+        console.log(ship.sunkBl)
+        gameFlow.removeAICoo(ship.sunkBl);
+      };
+    }  
     };
+
     for (let i = 0; ships.length > i; i++) {
       checkShips(ships[i]);
-    };
-    if(shipHit === false) {
-      missedAttack.push(shot)
-      return "missed"
+    };   
+    if(shipHit === false) {    
+      missedAttack.push(shot);
+      if (player === "player1") {
+        player1.addPlayer.player1Board.hit = false;
+      } else {
+        player2.addPlayer.player2Board.hit = false;
+      };      
+      return "missed";
+    } else {
+      if (player === "player1") {
+        player1.addPlayer.player1Board.hit = true;
+      } else {
+        player2.addPlayer.player2Board.hit = true;
+      };      
     };    
+    
   };
   // all coordinates as well available coordinates
   let allCoo = (() => {
@@ -90,12 +159,12 @@ const gameBoard = () => {
       for(let i = 0; remove.length > i; i++) {      
         let result = allCoo.filter(nr => nr != remove[i]);
         allCoo = result;
-      }
+      };
   };
   
 // place ships on the board randomly and manually
-  const shipPlace = (length, coord, pos, test, shipId) => { 
-        let coor = coord;
+  const shipPlace = (length, coord, pos, test, shipId, name) => { 
+      let coor = coord;    
        
     // ship to be placed horizontal or vertical
       const placement = (() => {
@@ -116,26 +185,25 @@ const gameBoard = () => {
     // if random choice run function until the available coordinates are found
     const shipCoo = (coordinates) => {          
       let coo = coordinates;
+
       //if no coordinates provided choose randomly
-      if (!coordinates) {        
-        
+      if (!coordinates) {          
 
-      //get the first random available coordinate of the ship
-      let randomCoo = allCoo[Math.round((Math.random())*allCoo.length)];
-      coo = [randomCoo];
+        //get the first random available coordinate of the ship
+        let randomCoo = allCoo[Math.round((Math.random())*allCoo.length)];
+        coo = [randomCoo];
 
-      //get the other coordinates depending if horizontal or vertical and length
-      if (placement === "horizontal") {         
-        for(let i = 1; length > i; i++) {
-          coo.push(randomCoo + i);
+        //get the other coordinates depending if horizontal or vertical and length
+        if (placement === "horizontal") {         
+          for(let i = 1; length > i; i++) {
+            coo.push(randomCoo + i);
+          };
+        } else if (placement === "vertical") {         
+          for(let i = 1; length > i; i++) {
+            coo.push(randomCoo + (i*10));
+          };
         };
-      } else if (placement === "vertical") {         
-        for(let i = 1; length > i; i++) {
-          coo.push(randomCoo + (i*10));
-        };
-      };
-      };
-
+      };     
 
       //check availability of the chosen coordinates
       let availability = [];      
@@ -154,8 +222,7 @@ const gameBoard = () => {
           && availability[0] > 10 && placement === "horizontal" 
           && (availability[0] - 1).toString()[0] != (availability[availability.length - 1]-1).toString()[0]) {            
             availability = [];               
-        } 
-        
+        };         
       })();
 
       //if random choice and the coordinates are not available rerun the function
@@ -163,9 +230,10 @@ const gameBoard = () => {
         return availability;
       } else {
         return shipCoo();
-      }      
+      };      
     };
     let coo = shipCoo(coor);
+    
 
     // a square around a ship to be blocked from creating new ships
     // coordinates for the marked spaces around shot down ship    
@@ -260,14 +328,18 @@ const gameBoard = () => {
         };
       };
       let blockAvail = block.filter(nr => nr > 0 && nr < 101);
-      // if(test) {
+      if(test) {
         blockAvail.forEach(bl => { 
         let text = document.createElement("p");       
         text.style.position = "absolute";            
-        text.innerHTML = "&#9679;";       
-        document.getElementById(bl).appendChild(text);       
+        text.innerHTML = "&#9679;";
+        if (player === "player1") {
+          document.getElementById(bl).appendChild(text);
+        } else if (player === "player2" || player === "AI") {
+          document.getElementById(`p2${bl}`).appendChild(text);
+        };               
         });
-      // }; 
+      }; 
       if (test != "test") {
         removeCoo(blockAvail);
       };     
@@ -277,34 +349,73 @@ const gameBoard = () => {
     // construct the ships with given coordinates
     if (!test) {
       const constructShip = (() => {    
-      createShip(coo, blockSq);          
+      createShip(coo, blockSq, player);          
       })();    
     };
     if(test != "test") {
       removeCoo(coo); 
     };     
-    player1.placeShips.coordinates[shipId].blocks = blockSq;    
+    if (name === "player1") {
+      player1.placeShips.coordinates[shipId].blocks = blockSq; 
+    } else  if(name === "player2" || name == "AI") {
+      player2.placeShips.coordinates[shipId].blocks = blockSq;
+    };         
   };   
-
-
-  return {allCoo, createShip, receiveAttack, ships, missedAttack, screenBoard, shipPlace};
+  
+  const resetBoard = () => {    
+    ships.splice(0);
+    allCoo = (() => {
+      let result = [];
+      for(let i = 1; 101 > i; i++) {
+        result.push(i);      
+      };
+      return result;
+    })();
+    allCoo.forEach(c => {
+      let coo = document.getElementById(c);  
+      coo.innerHTML= "";      
+      coo.style.backgroundColor = "";      
+    });   
+  };
+  return {resetBoard, allCoo, createShip, receiveAttack, ships, missedAttack, screenBoard, shipPlace, hit, shots};
 };
 
 // create a new player
-const player = (name, mode) => {
-  let title = name;
-  let enemy = name;
-  
-  // add player board
-  const addPlayer = (() => {  
-    name = gameBoard();
-    const screen = name.screenBoard(); 
-    return {name};
-  })();
+const player = (name) => {
+  let title = name;  
+  let enemy = (() => {
+    if(title === "player1") {
+      return "player2";
+    } else {
+      return "player1";
+    };
+  })();   
 
+  // add player board
+  let player1Board;
+  let player2Board;
+
+  const addPlayer = (() => {     
+    if (title === "player1") {
+      player1Board = gameBoard(title);
+      const player1Screen = player1Board.screenBoard();
+      result = player1Board;
+    } else {
+      player2Board = gameBoard(title);
+      const player2Screen = player2Board.screenBoard();
+      result = player2Board;
+    };   
+    return {player1Board, player2Board};
+  })();  
 
   //random ship placement
-  const randomShipPlacement = () => {
+  const randomShipPlacement = () => {  
+    let name;
+    if (title === "player1") {
+      name = player1Board;
+    } else {
+      name = player2Board;
+    };
     for (let i = 1; 11 > i; i++) {
       if (i < 2) {
         name.shipPlace(4);
@@ -319,14 +430,45 @@ const player = (name, mode) => {
     console.log(name.ships);
   };  
 
-// shoot the enemy 
-  if (mode === "war") {
-    const shoot = (() => {
-      let square = document.querySelectorAll(".square"); 
-      square.forEach(sq => {
-        sq.addEventListener("click", () => {      
-          if (!sq.hasChildNodes()) {
-            let shot = name.receiveAttack(Number(sq.id));
+// shoot the enemy  
+    let mode = "peace";   
+    const shoot = () => {         
+        // let square = document.querySelectorAll(".square");         
+        let squareP1 = (() => {
+          result = [];
+          for (let i = 1; i < 101; i++) {
+            result.push(i)
+          };
+          return result
+        })();
+        let squareP2 = (() => {
+          result = [];
+          for (let i = 1; i < 101; i++) {
+            result.push(`p2${i}`)
+          };
+          return result
+        })();      
+        
+        let name;
+        let square;
+        // let pow;
+        if (title === "player1") {
+          name = player1Board;
+          square = squareP1;          
+        } else {
+          name = player2Board;
+          square = squareP2;          
+        };
+        let markShot = (sq) => {  
+                
+          // if (title === "player1") {
+          //   pow = player1.mode
+          // } else {
+          //   pow = player2.mode;
+          // };  
+            
+          if (!sq.hasChildNodes()) {              
+            let shot = name.receiveAttack(sq.id);
             let text = document.createElement("p");           
             sq.appendChild(text);
             text.style.position = "absolute";
@@ -334,13 +476,53 @@ const player = (name, mode) => {
               text.innerHTML = "&#x2716;";
             } else {
               text.innerHTML = "&#x274C;";
-              text.style.fontSize = "150%"
+              text.style.fontSize = "150%";
+            };
+            if(title === "player1") {               
+              gameFlow.removeAICoo([sq.id]) 
+            };            
+          }; 
+          
+          gameFlow.turnPl();        
+        };
+        square.forEach(s => {  
+          let sq =  document.getElementById(s)     
+          sq.addEventListener("click", () => {
+            let pow;
+            if (title === "player1") {
+              pow = player1.mode
+            } else {
+              pow = player2.mode;
             };  
-          };      
-        });
-      });
-    })();
-  };
+            if (pow === "war" && !sq.hasChildNodes()){
+              markShot(sq);  
+            }  
+                      
+          //   if (title === "player1") {
+          //     pow = player1.mode
+          //   } else {
+          //     pow = player2.mode;
+          //   };       
+          //   if (!sq.hasChildNodes() && pow == "war") {              
+          //     let shot = name.receiveAttack(sq.id);
+          //     let text = document.createElement("p");           
+          //     sq.appendChild(text);
+          //     text.style.position = "absolute";
+          //     if(shot === "missed" && text){
+          //       text.innerHTML = "&#x2716;";
+          //     } else {
+          //       text.innerHTML = "&#x274C;";
+          //       text.style.fontSize = "150%";
+          //     };  
+          //   }; 
+          //   gameFlow.turnPl();        
+          });
+        });  
+        return {markShot}                
+    };
+    shoot();
+    
+  
   
   // manual ship placement    
     const placeShips = (() => {
@@ -354,7 +536,7 @@ const player = (name, mode) => {
         container2: 2,
         container3: 3,
         container4: 4
-      }
+      };
       let shipContainers = [];
       let squaree;
       let numtext;
@@ -365,8 +547,7 @@ const player = (name, mode) => {
         squaree.className = "shipChoice";     
         squaree.style.gridTemplateColumns = `repeat(${[i]}`;
         let shipContainer = squaree.appendChild(document.createElement("div"));        
-        shipContainers.push(shipContainer)
-        // let text = ` \u2715 ${amounts[`container${i}`]}`;
+        shipContainers.push(shipContainer);       
         shipContainer.id = `container${i}`;
         shipContainer.className = `container${i}`;
         numtext = document.getElementById(`choice${i}`).appendChild(document.createElement("p"));
@@ -391,8 +572,7 @@ const player = (name, mode) => {
             return 0;
           };          
         })();
-        change.innerHTML = `\u2715  ${num}`
-        console.log(amounts)
+        change.innerHTML = `\u2715  ${num}`;        
       };      
 
       // draggable placement      
@@ -414,6 +594,33 @@ const player = (name, mode) => {
       let containerId;
       let position = "horizontal";
       let outOfSq = true;
+
+      const resetPlayer = () => {   
+        for (let i = 0; Object.keys(coordinates).length > i; i++) {
+          coordinates[Object.keys(coordinates)[i]].blocks = [];
+        };        
+        containerId;
+        containerNr;
+        validPlace = false; 
+        goodToCopy = false;
+        outOfSq = true;
+        position = "horizontal";
+        amounts = {
+          container1: 1,
+          container2: 2,
+          container3: 3,
+          container4: 4
+        };
+        sqColor = [];        
+        usedCoo = [];
+        copies =[];
+        copyCounter = {
+          container1: 0,
+          container2: 0,
+          container3: 0,
+          container4: 0
+        };
+      };
       
 
       // ships first elements second number
@@ -429,21 +636,46 @@ const player = (name, mode) => {
         [(((sqColor[0][sqColor[0].length-1]).toString()).split("")).length -1];
         return lastNr;
       };
+     
 
       // ships drag events    
-      shipContainers.forEach(container => {       
-        container.draggable ="true";     
-        container.addEventListener("dragstart", () => {         
-          containerNr = container.className;  
+      const startDrag = (container) => {
+        containerNr = container.className;  
           containerId = container.id;          
           if(!container.id[10]) {
             goodToCopy = true;
           }; 
-          position = "horizontal";           
+          position = "horizontal";         
+      };
+      shipContainers.forEach(container => {       
+        container.draggable ="true";     
+        container.addEventListener("dragstart", () => { 
+          startDrag(container);        
+          // containerNr = container.className;  
+          // containerId = container.id;          
+          // if(!container.id[10]) {
+          //   goodToCopy = true;
+          // }; 
+          // position = "horizontal";           
         });
+        container.addEventListener("touchstart", (e) => {
+          e.preventDefault();
+         
+          
+          startDrag(container);
+        });
+        container.addEventListener("touchmove", (e) => {
+          
+          container.style.position ="absolute"
+          let touchLocation = e.targetTouches[0];
+          let containerX = container.style.left = touchLocation.pageX + 'px';
+          let containerY = container.style.top = touchLocation.pageY + 'px';
+          console.log()
+          console.log(document.elementFromPoint(containerX, containerY))
+        })
 
         container.addEventListener("dragend", () => {
-          console.log("end")
+          
           dragTo.forEach(sq => {
             sq.className = "square";
           }); 
@@ -453,9 +685,7 @@ const player = (name, mode) => {
 
       // drag events for all the copies on the board
       const marksReDo = () => {
-        let length = Object.keys(coordinates).length;
-          console.log(containerId)
-          // console.log( coordinates[Object.keys(coordinates)[0]].blocks) 
+        let length = Object.keys(coordinates).length;     
         for(let i = 0; length > i; i++) {
           let check = coordinates[Object.keys(coordinates)[i]].blocks;                         
           check.forEach(c => {            
@@ -473,7 +703,7 @@ const player = (name, mode) => {
        
 
 
-      const updateList = ((c) => {         
+      const updateList = ((c) => {              
           c.addEventListener("dragstart", () => {            
             containerNr = c.className;  
             containerId = c.id;  
@@ -504,7 +734,7 @@ const player = (name, mode) => {
               sq.className = "square";
             });  
             if (outOfSq === true) {              
-              coordinates[containerId].coo.forEach(c => {
+              coordinates[containerId].coo.forEach(c => {              
                 usedCoo.push(c);            
               });
               coordinates[containerId].blocks.forEach(c => {
@@ -518,10 +748,10 @@ const player = (name, mode) => {
             outOfSq = true;
             
           });
-          c.addEventListener("click", () => {
+          c.addEventListener("click", () => {            
             let goodToTurn = true;
             containerId = c.id;
-            if (c.style.display === "flex") {
+            if (c.style.display === "flex") {              
               let cooL = coordinates[c.id].coo.length;
               let nCoo =  [];
               for(let i = 0; i < cooL; i++) { 
@@ -531,8 +761,7 @@ const player = (name, mode) => {
                 };               
               };
               let oldCoo = coordinates[c.id].coo;
-              let blocks = coordinates[c.id].blocks;
-             console.log(c.id)
+              let blocks = coordinates[c.id].blocks;             
              
               // remove ship coordinates from used
               oldCoo.forEach(s => {
@@ -553,16 +782,20 @@ const player = (name, mode) => {
                 };
               });
               marksReDo()
-              console.log(nCoo)
-              console.log(usedCoo)
+            
               // check if any of the new coordinates are the same as used coordinates
-              for (let i = 0; nCoo.length > i; i++) {
-                
+              for (let i = 0; nCoo.length > i; i++) {                
                 usedCoo.forEach(u => {
                   if(nCoo[i] === u) {
                     goodToTurn = false;
                   };
                 });
+              };
+              let name;
+              if (title === "player1") {
+                name = player1Board;
+              } else {
+                name = player2Board;
               };
 
               //with the conditions met tilt the ship and add the new coordinates to used
@@ -575,7 +808,8 @@ const player = (name, mode) => {
                       let empty = document.getElementById(b);                  
                       empty.innerHTML = "";                   
                 });
-                name.shipPlace(ships[Number(c.id[9]-1)], nCoo, "vertical", "test", c.id);
+                
+                name.shipPlace(ships[Number(c.id[9]-1)], nCoo, "vertical", "test", c.id, title);
                 coordinates[c.id].blocks.forEach(c => {
                   usedCoo.push(c);
                 });
@@ -584,9 +818,7 @@ const player = (name, mode) => {
                 });
                 marksReDo();                              
               } else {
-                blocks.forEach(b => {
-                  console.log("else")
-                  console.log(goodToTurn)
+                blocks.forEach(b => {                 
                   let check = document.getElementById(b);
                   usedCoo.push(b);
                   if(check.innerHTML === "") {
@@ -603,6 +835,7 @@ const player = (name, mode) => {
             
               
             } else if (c.style.display === "grid") { 
+              containerNr = c.id;              
               let goodToTurn = true;             
               let cooL = coordinates[c.id].coo.length;
               let nCoo =  [];
@@ -634,9 +867,7 @@ const player = (name, mode) => {
                   let empty = document.getElementById(b);                  
                   empty.innerHTML = "";             
                 });     
-                marksReDo()           
-                console.log(blocks)
-                console.log(usedCoo)
+                marksReDo()                 
                 // check if any of the new coordinates are the same as used coordinates
                 for (let i = 0; nCoo.length > i; i++) {                  
                   usedCoo.forEach(u => {                    
@@ -646,31 +877,37 @@ const player = (name, mode) => {
                   });
                 };
                    
-              const repos = () => {                        
+              const repos = () => {  
+                let name;
+                if (title === "player1") {
+                  name = player1Board;
+                } else {
+                  name = player2Board;
+                };                      
                 coordinates[c.id].coo = nCoo;
                 position = "horizontal";
                 coordinates[c.id].position = position;
                 c.style.display = "flex";
-
                 blocks.forEach(b => {                
                   let empty = document.getElementById(b);                  
-                  empty.innerHTML = "";                   
+                  empty.innerHTML = "";                  
                 });
-                name.shipPlace(ships[Number(c.id[9]-1)], nCoo, "horizontal", "test", c.id);
+               
+                name.shipPlace(ships[Number(c.id[9]-1)], nCoo, "horizontal", "test", c.id, title);
                 coordinates[c.id].blocks.forEach(c => {
                   usedCoo.push(c);
                 });
                 nCoo.forEach(n => {
                   usedCoo.push(n)
                 });
-                marksReDo();                
+                marksReDo();                              
               };      
               if(nCoo.length === cooL &&
                  ((nCoo[0]-1).toString())[1] <= 10 - ships[containerNr[9]-1]
-                 && goodToTurn === true) {                
+                 && goodToTurn === true) {                             
                 repos();
               } else if (nCoo[0] < 10 && nCoo.length === cooL && ((nCoo[0]-1).toString())[0] <= 10 - ships[containerNr[9]-1]
-                && goodToTurn === true) {
+                && goodToTurn === true) {                 
                 repos();
               } else {
                 blocks.forEach(b => {
@@ -698,8 +935,7 @@ const player = (name, mode) => {
           e.preventDefault();            
         });
         
-        sq.addEventListener("dragenter", e => {
-          e.preventDefault();
+        const enterDrag = (sq) => {
           prevSq = sq.id;
           if (position === "horizontal") {
             if (containerNr === "container1") {
@@ -723,7 +959,36 @@ const player = (name, mode) => {
               };
           };           
           
-          clean();         
+          clean();      
+        };
+
+        sq.addEventListener("dragenter", e => {
+          e.preventDefault();
+          enterDrag(sq);
+          // prevSq = sq.id;
+          // if (position === "horizontal") {
+          //   if (containerNr === "container1") {
+          //   sqColor.push([Number(sq.id)-2, Number(sq.id)-1, Number(sq.id), Number(sq.id)+1].filter(x => x>0 && x < 101));
+          //   } else if (containerNr === "container2") {
+          //     sqColor.push([Number(sq.id)-1, Number(sq.id), Number(sq.id)+1].filter(x => x>0 && x < 101));
+          //   } else if (containerNr === "container3") {
+          //     sqColor.push([Number(sq.id)-1, Number(sq.id)].filter(x => x>0 && x < 101));
+          //   } else if (containerNr === "container4") {
+          //     sqColor.push([Number(sq.id)].filter(x => x>0 && x < 101));
+          //   };
+          // } else if (position === "vertical") {
+          //   if (containerNr === "container1") {
+          //     sqColor.push([Number(sq.id)-20, Number(sq.id)-10, Number(sq.id), Number(sq.id)+10].filter(x => x>0 && x < 101));
+          //     } else if (containerNr === "container2") {
+          //       sqColor.push([Number(sq.id)-10, Number(sq.id), Number(sq.id)+10].filter(x => x>0 && x < 101));
+          //     } else if (containerNr === "container3") {
+          //       sqColor.push([Number(sq.id)-10, Number(sq.id)].filter(x => x>0 && x < 101));
+          //     } else if (containerNr === "container4") {
+          //       sqColor.push([Number(sq.id)].filter(x => x>0 && x < 101));
+          //     };
+          // };           
+          
+          // clean();         
         });
 
         const clean = () => {
@@ -838,14 +1103,11 @@ const player = (name, mode) => {
             validPlace =false;
           };
         });
-
-        sq.addEventListener("drop", e => {
-          e.preventDefault();        
+        const dropDrag = (sq) => {
           let containerCoo= []; 
           let sqSt;
           let sqF;           
-          let ship; 
-         
+          let ship;           
           if (containerNr === "container1") {
             sqSt= -2;  
             sqF = 2; 
@@ -969,34 +1231,358 @@ const player = (name, mode) => {
             if (goodToCopy === true) {
               coordinates[shipId] = {};  
               coordinates[shipId].position = "horizontal";              
+            };            
+            coordinates[shipId].coo = containerCoo;
+            let name;
+            if (title === "player1") {
+              name = player1Board;
+            } else {
+              name = player2Board;
             };
-               
-            coordinates[shipId].coo = containerCoo;     
-            name.shipPlace(ships[Number(containerNr[9]-1)], containerCoo, coordinates[shipId].position, "test", shipId);            
+            name.shipPlace(ships[Number(containerNr[9]-1)], containerCoo, coordinates[shipId].position, "test", shipId, title);            
             
-           // add blocked coordinates to used coordinates                    
-            coordinates[shipId].blocks.forEach(c => {
+           // add blocked coordinates to used coordinates                       
+            coordinates[shipId].blocks.forEach(c => {              
               usedCoo.push(c);
             });
 
             goodToCopy = false; 
 
           };
+        }; 
+
+        sq.addEventListener("drop", e => {
+          e.preventDefault();        
+          dropDrag(sq);
+          // let containerCoo= []; 
+          // let sqSt;
+          // let sqF;           
+          // let ship; 
+         
+          // if (containerNr === "container1") {
+          //   sqSt= -2;  
+          //   sqF = 2; 
+          // } else if (containerNr === "container2"){
+          //   sqSt= -1;
+          //   sqF = 2;
+          // } else if (containerNr === "container3" ){
+          //   sqSt= -1;
+          //   sqF = 1;
+          // } else if (containerNr === "container4") {
+          //   sqSt = 0;
+          //   sqF = 1;
+          // };
+
+          // if (position === "horizontal") {           
+          //   for (let i = sqSt; i< sqF; i++) {                
+          //       containerCoo.push((Number(sq.id))+Number([i]));                
+          //   }; 
+          // } else if (position === "vertical") {            
+          //   for (let i = sqSt; i< sqF; i++) {                
+          //     containerCoo.push((Number(sq.id)) + Number([i])*10);                
+          //   }; 
+          // };           
+
+          // //check if ship coordinates matches already occupied coordinates
+          // containerCoo.forEach(con => {
+          //   for (let i = 0; usedCoo.length > i; i++) {
+          //     if(con === usedCoo[i]) {
+          //       validPlace = false;
+          //     };
+          //   };
+          // });
+
+          // // if the coordinates are unoccupied add ship to the board and push coordinates to occupied
+          // if (validPlace === true) {
+          //   containerCoo.forEach(con => {
+          //     usedCoo.push(con);
+          //   });
+          // };
+
+          // if (validPlace != false) { 
+          //   outOfSq = false;                  
+          //   const createCopy = () => {
+          //     let movable = document.getElementById(containerNr);
+          //     clone= movable.cloneNode(true);           
+          //     if (containerNr === "container1") {
+          //       clone.id = `${movable.id}-${copyCounter.container1}`;
+          //       clone.className = "container1";
+          //       copyCounter.container1 += 1;                
+          //       containerNr = "container1";
+          //       containerId = clone.id;
+          //       copies.push(clone);
+          //     } else if (containerNr === "container2") {
+          //       clone.id = `${movable.id}-${copyCounter.container2}`;
+          //       clone.className = "container2";
+          //       copyCounter.container2 += 1;               
+          //       containerNr = "container2";
+          //       containerId = clone.id;
+          //       copies.push(clone);
+          //     } else if (containerNr === "container3") {
+          //       clone.id = `${movable.id}-${copyCounter.container3}`;
+          //       clone.className = "container3";
+          //       copyCounter.container3 += 1;                
+          //       containerNr = "container3";
+          //       containerId = clone.id;
+          //       copies.push(clone);
+          //     } else if (containerNr === "container4") {
+          //       clone.id = `${movable.id}-${copyCounter.container4}`;
+          //       clone.className = "container4";
+          //       copyCounter.container4 += 1;                
+          //       containerNr = "container4";
+          //       containerId = clone.id;
+          //       copies.push(clone);
+          //     };        
+          //   };
+
+          //   if(goodToCopy === true) {          
+          //     if (copyCounter.container1 < 1 && containerNr === "container1" 
+          //     || copyCounter.container2 < 2 && containerNr === "container2"
+          //     || copyCounter.container3 < 3 && containerNr === "container3"
+          //     || copyCounter.container4 < 4 && containerNr === "container4") {
+          //       createCopy();            
+          //     };
+          //     amounts[containerNr] -= 1;
+          //     changeNum(containerNr[9]);
+
+          //     if (amounts[containerNr] <= 0) {
+          //       document.getElementById(containerNr).draggable = false;
+          //     };
+          //   };  
+           
+          //   if (goodToCopy === true) {              
+          //     updateList(copies[copies.length - 1]);              
+          //     ship = clone;
+          //   } else {
+          //     ship = document.getElementById(containerId);              
+          //   }
+          //   ship.style.position = "absolute";
+          //   ship.style.zIndex = "9";   
+          //   let shipId = ship.id;
+            
+
+          //   if (position === "horizontal") {
+          //     if(containerNr === "container1") {               
+          //       document.getElementById(sq.id-2).append(ship);                               
+          //     } else if (containerNr === "container2" || containerNr == "container3"){                 
+          //       document.getElementById(sq.id-1).append(ship);                        
+          //     } else if (containerNr === "container4") {
+          //       document.getElementById(sq.id).append(ship);               
+          //     };              
+          //   } else if (position === "vertical") {
+          //     if(containerNr === "container1") {
+          //       document.getElementById(Number(sq.id) - 20).append(ship);              
+          //     } else if (containerNr === "container2" || containerNr === "container3") {
+          //       document.getElementById(Number(sq.id) - 10).append(ship);
+          //     } else if(containerNr === "container4") {
+          //       document.getElementById(Number(sq.id)).append(ship);
+          //     };              
+          //   };           
+            
+          //   if (goodToCopy === true) {
+          //     coordinates[shipId] = {};  
+          //     coordinates[shipId].position = "horizontal";              
+          //   };
+               
+          //   coordinates[shipId].coo = containerCoo;     
+          //   name.shipPlace(ships[Number(containerNr[9]-1)], containerCoo, coordinates[shipId].position, "test", shipId);            
+            
+          //  // add blocked coordinates to used coordinates                    
+          //   coordinates[shipId].blocks.forEach(c => {
+          //     usedCoo.push(c);
+          //   });
+
+          //   goodToCopy = false; 
+
+          // };
         });       
       });  
       //end drag event 
       
       
 
-      return {coordinates}
+      return {coordinates, resetPlayer}
      }   
     })();
   
   
-  return {enemy, randomShipPlacement, addPlayer, placeShips}  
+  return {enemy, randomShipPlacement, addPlayer, placeShips, mode, shoot}  
 };
 
+let player1;
+let player2;
+
+
+const gameFlow = (() => {
+  let allCoo;
+  let shots;
+  let gameStart = false;
+  let turn = "player1";
+  let AI = false;
+
+  const removeAICoo = (coo) => {
+    let length = allCoo.length;
+      console.log(coo)
+      // console.log(`shot${shots[shots.length-1]}`)
+    
+    // if (!coo) {
+    //   for(let i = 0; length > i; i++){                
+    //     if(allCoo[i] == shots[shots.length-1]) {
+    //       allCoo.splice(i, 1);          
+    //     };
+    //   };
+    // } else {
+      coo.forEach(c => {        
+        for(let i = 0; length > i; i++){                         
+          if(allCoo[i] == c) {           
+            allCoo.splice(i, 1);          
+          };
+        };
+      }); 
+      console.log(allCoo)     
+    // }; 
+    
+  };
+  const player1Choice = () => {
+    player1 = player("player1");
+  };
+  const player2Choice = () => {
+    player2 = player("player2");
+  };
+  const player2ChoiceAI = () => {
+    player2 = player("AI");
+  };
+
+  //navbar buttons
+  const PVC = document.getElementById("PVC"); 
+  const frontPage = document.getElementById("front-page");
+  const backMenu = document.getElementById("return-button");
+  const randomPlace = document.getElementById("random-button");
+  const clearBoard = document.getElementById("clear-button");
+  const startGame = document.getElementById("start-button");
+
+  // methods for buttons
+  const zeroChoices = () => {    
+    for(let i = 1; i <= 4; i++){      
+      let change = document.getElementById(`text${i}`);
+      change.innerHTML = `\u2715  0`;
+      let noDrag = document.getElementById(`container${i}`);      
+      noDrag.draggable = false;
+    };
+  };
+  const allChoices = () => {
+    for(let i = 1; i <= 4; i++){    
+      let change = document.getElementById(`text${i}`);
+      change.innerHTML = `\u2715  ${i}`;
+      let noDrag = document.getElementById(`container${i}`);      
+      noDrag.draggable = true;
+    };
+  };
+  const resetBoard = () => {
+    if (turn === "player1") {
+      player1.addPlayer.player1Board.resetBoard();       
+    } else  if (turn === "player2") {
+      player2.addPlayer.player2Board.resetBoard();       
+    };  
+  };
+  const randomShips = () => {
+    if (turn === "player1") {     
+      player1.randomShipPlacement();
+    } else  if (turn === "player2") {      
+      player2.randomShipPlacement();
+    };    
+  };
+  const resetPlayer = () => {
+    if (turn === "player1") {       
+      player1.placeShips.resetPlayer();
+    } else  if (turn === "player2") {      
+      player2.placeShips.resetPlayer();
+    };    
+  };  
+
+  //click events
+  PVC.addEventListener("click", () => {
+    frontPage.style.display = "none";
+    if(!player1){
+      player1Choice();
+    };   
+    AI = true; 
+  });
+  backMenu.addEventListener("click", () => {
+    frontPage.style.display = ""; 
+    resetBoard();
+    resetPlayer(); 
+    allChoices(); 
+  });
+  randomPlace.addEventListener("click", () => { 
+    resetBoard();    
+    zeroChoices();
+    randomShips();     
+  });  
+  clearBoard.addEventListener("click", () => {    
+    resetBoard(); 
+    allChoices();
+    resetPlayer();
+  });
+  startGame.addEventListener("click", () => {     
+    turn = "player2";
+    document.getElementById("ships-and-navigation").style.display = "none";
+    document.getElementById("board-w-coor2").style.display = "grid";
+    if(AI === true) {
+      player2ChoiceAI();
+      randomShips("AI");
+    };    
+    player2.mode = "war";
+    player1.mode = "peace";    
+    turn = "player1";  
+    gameStart = true;
+    allCoo = player1.addPlayer.player1Board.allCoo; 
+  });
+
+  //take turns to shoot
+  
+  let turnPl = () => {   
+    if (gameStart === true) {        
+      if (player2.addPlayer.player2Board.hit === false) {
+        turn = "player1";
+        player2.mode = "peace";
+        player1.mode = "war";
+        player2.addPlayer.player2Board.hit = "";
+        if(AI === true) {
+          moveAI();
+        };
+      } else if (player1.addPlayer.player1Board.hit === false) {
+        turn = "player2";
+        player1.mode = "peace";
+        player2.mode = "war";
+        player1.addPlayer.player1Board.hit = "";        
+        shots = player1.addPlayer.player1Board.shots;        
+      } else if (player2.addPlayer.player2Board.hit === true) {
+        turn = "player1";
+        player2.mode = "war";
+        player1.mode = "peace";
+        player1.addPlayer.player1Board.hit = "";
+      } else {
+        if(AI === true) {
+          moveAI();
+        };
+      };
+    };   
+  };
+  
+  
+
+  const moveAI = () => {       
+      let length = allCoo.length;
+      let randomNum = Math.round(Math.random() * (length - 1)); 
+      if (length > 0) {
+        player1.shoot().markShot(document.getElementById(allCoo[randomNum]));
+      };     
+  };
+  
+ return {turnPl, removeAICoo};
+})();
 // player("AI");
-const player1 = player("player1");
+
 // player1.randomShipPlacement();
 
