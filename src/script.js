@@ -118,8 +118,7 @@ const gameBoard = (player) => {
           };
         }; 
       };
-      if (ship.hit.length === ship.shipCoor.length) {
-        console.log(ship.sunkBl)
+      if (ship.hit.length === ship.shipCoor.length) {        
         gameFlow.removeAICoo(ship.sunkBl);
       };
     }  
@@ -426,8 +425,7 @@ const player = (name) => {
       } else if (i < 11) {
         name.shipPlace(1);
       };
-    };
-    console.log(name.ships);
+    };    
   };  
 
 // shoot the enemy  
@@ -459,14 +457,7 @@ const player = (name) => {
           name = player2Board;
           square = squareP2;          
         };
-        let markShot = (sq) => {  
-                
-          // if (title === "player1") {
-          //   pow = player1.mode
-          // } else {
-          //   pow = player2.mode;
-          // };  
-            
+        let markShot = (sq) => {    
           if (!sq.hasChildNodes()) {              
             let shot = name.receiveAttack(sq.id);
             let text = document.createElement("p");           
@@ -650,13 +641,7 @@ const player = (name) => {
       shipContainers.forEach(container => {       
         container.draggable ="true";     
         container.addEventListener("dragstart", () => { 
-          startDrag(container);        
-          // containerNr = container.className;  
-          // containerId = container.id;          
-          // if(!container.id[10]) {
-          //   goodToCopy = true;
-          // }; 
-          // position = "horizontal";           
+          startDrag(container);              
         });
         container.addEventListener("touchstart", (e) => {
           e.preventDefault();
@@ -771,6 +756,7 @@ const player = (name) => {
                   };
                 };               
               });
+
               // remove block coordinates from used
               blocks.forEach(b => {
                 for (let i = 0; usedCoo.length > i; i++) {                 
@@ -781,7 +767,7 @@ const player = (name) => {
                   empty.innerHTML = "";             
                 };
               });
-              marksReDo()
+              marksReDo();
             
               // check if any of the new coordinates are the same as used coordinates
               for (let i = 0; nCoo.length > i; i++) {                
@@ -814,7 +800,7 @@ const player = (name) => {
                   usedCoo.push(c);
                 });
                 nCoo.forEach(n => {
-                  usedCoo.push(n)
+                  usedCoo.push(n);
                 });
                 marksReDo();                              
               } else {
@@ -867,7 +853,8 @@ const player = (name) => {
                   let empty = document.getElementById(b);                  
                   empty.innerHTML = "";             
                 });     
-                marksReDo()                 
+                marksReDo();  
+
                 // check if any of the new coordinates are the same as used coordinates
                 for (let i = 0; nCoo.length > i; i++) {                  
                   usedCoo.forEach(u => {                    
@@ -964,31 +951,7 @@ const player = (name) => {
 
         sq.addEventListener("dragenter", e => {
           e.preventDefault();
-          enterDrag(sq);
-          // prevSq = sq.id;
-          // if (position === "horizontal") {
-          //   if (containerNr === "container1") {
-          //   sqColor.push([Number(sq.id)-2, Number(sq.id)-1, Number(sq.id), Number(sq.id)+1].filter(x => x>0 && x < 101));
-          //   } else if (containerNr === "container2") {
-          //     sqColor.push([Number(sq.id)-1, Number(sq.id), Number(sq.id)+1].filter(x => x>0 && x < 101));
-          //   } else if (containerNr === "container3") {
-          //     sqColor.push([Number(sq.id)-1, Number(sq.id)].filter(x => x>0 && x < 101));
-          //   } else if (containerNr === "container4") {
-          //     sqColor.push([Number(sq.id)].filter(x => x>0 && x < 101));
-          //   };
-          // } else if (position === "vertical") {
-          //   if (containerNr === "container1") {
-          //     sqColor.push([Number(sq.id)-20, Number(sq.id)-10, Number(sq.id), Number(sq.id)+10].filter(x => x>0 && x < 101));
-          //     } else if (containerNr === "container2") {
-          //       sqColor.push([Number(sq.id)-10, Number(sq.id), Number(sq.id)+10].filter(x => x>0 && x < 101));
-          //     } else if (containerNr === "container3") {
-          //       sqColor.push([Number(sq.id)-10, Number(sq.id)].filter(x => x>0 && x < 101));
-          //     } else if (containerNr === "container4") {
-          //       sqColor.push([Number(sq.id)].filter(x => x>0 && x < 101));
-          //     };
-          // };           
-          
-          // clean();         
+          enterDrag(sq);          
         });
 
         const clean = () => {
@@ -1000,75 +963,7 @@ const player = (name) => {
           };
         };
        
-        sq.addEventListener("dragleave", (e) => {  
-          // if (position === "horizontal") {      
-          // if(Number(prevSq) === Number(sq.id)-10) {            
-          //   sqColor[0].forEach(squ => {
-          //     if (Number(squ)+10 <101) {
-          //       document.getElementById(Number(squ)+10).className = "square";
-          //     };
-          //   });            
-          // } else if(Number(prevSq) === Number(sq.id) + 10) {
-          //   sqColor[0].forEach(squ => {
-          //     if(Number(squ)-10 > 0) {
-          //       document.getElementById(Number(squ)-10).className = "square";
-          //     };
-          //   });
-          // } else if(Number(prevSq) === Number(sq.id)+9) {
-          //   sqColor[0].forEach(squ => {
-          //     document.getElementById(Number(squ)-9).className = "square";
-          //   });
-          // } else if(Number(prevSq) === Number(sq.id)-9) {
-          //   sqColor[0].forEach(squ => {
-          //     document.getElementById(Number(squ)+9).className = "square";
-          //   });
-          // } else if(Number(prevSq) === Number(sq.id)+11) {
-          //   sqColor[0].forEach(squ => {
-          //     document.getElementById(Number(squ)-11).className = "square";
-          //   });
-          // } else if(Number(prevSq) === Number(sq.id)-11) {            
-          //   sqColor[0].forEach(squ => {
-          //     document.getElementById(Number(squ)+11).className = "square";
-          //   });
-          // } else if(Number(prevSq) === Number(sq.id)-1) {           
-          //   if (containerNr === "container1" || containerNr === "container2") {              
-          //     if(sqColor[0][sqColor[0].length-1]+1 < 101 && sqColor[0][sqColor[0].length-1] < 101) {
-          //       document.getElementById(sqColor[0][sqColor[0].length-1]+1).className = "square";
-          //       document.getElementById(sqColor[0][sqColor[0].length-1]).className += " hoveredSq";
-          //     };
-          //     if (sqColor[0][sqColor[0].length-1]-1 > 0 && sqColor[0][sqColor[0].length-1]-2 > 0) {
-          //       document.getElementById(sqColor[0][sqColor[0].length-1]-1).className += " hoveredSq";
-          //       document.getElementById(sqColor[0][sqColor[0].length-1]-2).className += " hoveredSq";
-          //     };
-          //   };
-          //   if (containerNr === "container3" || containerNr === "container4") {
-          //     document.getElementById(sqColor[0][sqColor[0].length-1]+1).className = "square";
-          //     document.getElementById(sqColor[0][sqColor[0].length-1]).className += " hoveredSq";
-          //   };            
-          // } else if (Number(prevSq) === Number(sq.id)+1) {            
-          //   if (containerNr === "container1" || containerNr === "container2") {   
-          //     if(sqColor[0][0]-1 > 0 && sqColor[0][0]+2 <101){
-          //     document.getElementById(sqColor[0][0]-1).className = "square";
-          //     document.getElementById(sqColor[0][0]+2).className += " hoveredSq";
-          //     document.getElementById(sqColor[0][0]+1).className += " hoveredSq";
-          //     document.getElementById(sqColor[0][0]).className += " hoveredSq";
-          //     };
-          //   }; 
-          //   if (containerNr === "container3" || containerNr === "container4") {
-          //     document.getElementById(sqColor[0][0]).className += " hoveredSq";
-          //     if (sqColor[0][0]+2 < 101){
-          //       document.getElementById(sqColor[0][0]+2).className = "square";
-          //     };
-          //   };
-          // } else {            
-          //   sqColor[0].forEach(squ => {
-          //     document.getElementById(Number(squ)).className = "square";
-          //   });
-          // };      
-          // } else if (position === "vertical") {
-
-          // };
-
+        sq.addEventListener("dragleave", (e) => { 
           const sqFill = () => {
             validPlace = true;
             sqColor.forEach(squ => {
@@ -1197,8 +1092,22 @@ const player = (name) => {
               if (amounts[containerNr] <= 0) {
                 document.getElementById(containerNr).draggable = false;
               };
-            };  
-           
+            }; 
+            
+            //when all the ship are placed the start game button is activated
+            const activateStartGame = (() => {
+              let counter = 0;
+              Object.keys(amounts).forEach(o => {
+                if (amounts[o] <= 0) {
+                  counter += 1;
+                };
+              });              
+              if (counter === 4) {
+                document.getElementById("start-button").disabled = false;
+              };              
+            })();
+            
+            
             if (goodToCopy === true) {              
               updateList(copies[copies.length - 1]);              
               ship = clone;
@@ -1253,148 +1162,7 @@ const player = (name) => {
 
         sq.addEventListener("drop", e => {
           e.preventDefault();        
-          dropDrag(sq);
-          // let containerCoo= []; 
-          // let sqSt;
-          // let sqF;           
-          // let ship; 
-         
-          // if (containerNr === "container1") {
-          //   sqSt= -2;  
-          //   sqF = 2; 
-          // } else if (containerNr === "container2"){
-          //   sqSt= -1;
-          //   sqF = 2;
-          // } else if (containerNr === "container3" ){
-          //   sqSt= -1;
-          //   sqF = 1;
-          // } else if (containerNr === "container4") {
-          //   sqSt = 0;
-          //   sqF = 1;
-          // };
-
-          // if (position === "horizontal") {           
-          //   for (let i = sqSt; i< sqF; i++) {                
-          //       containerCoo.push((Number(sq.id))+Number([i]));                
-          //   }; 
-          // } else if (position === "vertical") {            
-          //   for (let i = sqSt; i< sqF; i++) {                
-          //     containerCoo.push((Number(sq.id)) + Number([i])*10);                
-          //   }; 
-          // };           
-
-          // //check if ship coordinates matches already occupied coordinates
-          // containerCoo.forEach(con => {
-          //   for (let i = 0; usedCoo.length > i; i++) {
-          //     if(con === usedCoo[i]) {
-          //       validPlace = false;
-          //     };
-          //   };
-          // });
-
-          // // if the coordinates are unoccupied add ship to the board and push coordinates to occupied
-          // if (validPlace === true) {
-          //   containerCoo.forEach(con => {
-          //     usedCoo.push(con);
-          //   });
-          // };
-
-          // if (validPlace != false) { 
-          //   outOfSq = false;                  
-          //   const createCopy = () => {
-          //     let movable = document.getElementById(containerNr);
-          //     clone= movable.cloneNode(true);           
-          //     if (containerNr === "container1") {
-          //       clone.id = `${movable.id}-${copyCounter.container1}`;
-          //       clone.className = "container1";
-          //       copyCounter.container1 += 1;                
-          //       containerNr = "container1";
-          //       containerId = clone.id;
-          //       copies.push(clone);
-          //     } else if (containerNr === "container2") {
-          //       clone.id = `${movable.id}-${copyCounter.container2}`;
-          //       clone.className = "container2";
-          //       copyCounter.container2 += 1;               
-          //       containerNr = "container2";
-          //       containerId = clone.id;
-          //       copies.push(clone);
-          //     } else if (containerNr === "container3") {
-          //       clone.id = `${movable.id}-${copyCounter.container3}`;
-          //       clone.className = "container3";
-          //       copyCounter.container3 += 1;                
-          //       containerNr = "container3";
-          //       containerId = clone.id;
-          //       copies.push(clone);
-          //     } else if (containerNr === "container4") {
-          //       clone.id = `${movable.id}-${copyCounter.container4}`;
-          //       clone.className = "container4";
-          //       copyCounter.container4 += 1;                
-          //       containerNr = "container4";
-          //       containerId = clone.id;
-          //       copies.push(clone);
-          //     };        
-          //   };
-
-          //   if(goodToCopy === true) {          
-          //     if (copyCounter.container1 < 1 && containerNr === "container1" 
-          //     || copyCounter.container2 < 2 && containerNr === "container2"
-          //     || copyCounter.container3 < 3 && containerNr === "container3"
-          //     || copyCounter.container4 < 4 && containerNr === "container4") {
-          //       createCopy();            
-          //     };
-          //     amounts[containerNr] -= 1;
-          //     changeNum(containerNr[9]);
-
-          //     if (amounts[containerNr] <= 0) {
-          //       document.getElementById(containerNr).draggable = false;
-          //     };
-          //   };  
-           
-          //   if (goodToCopy === true) {              
-          //     updateList(copies[copies.length - 1]);              
-          //     ship = clone;
-          //   } else {
-          //     ship = document.getElementById(containerId);              
-          //   }
-          //   ship.style.position = "absolute";
-          //   ship.style.zIndex = "9";   
-          //   let shipId = ship.id;
-            
-
-          //   if (position === "horizontal") {
-          //     if(containerNr === "container1") {               
-          //       document.getElementById(sq.id-2).append(ship);                               
-          //     } else if (containerNr === "container2" || containerNr == "container3"){                 
-          //       document.getElementById(sq.id-1).append(ship);                        
-          //     } else if (containerNr === "container4") {
-          //       document.getElementById(sq.id).append(ship);               
-          //     };              
-          //   } else if (position === "vertical") {
-          //     if(containerNr === "container1") {
-          //       document.getElementById(Number(sq.id) - 20).append(ship);              
-          //     } else if (containerNr === "container2" || containerNr === "container3") {
-          //       document.getElementById(Number(sq.id) - 10).append(ship);
-          //     } else if(containerNr === "container4") {
-          //       document.getElementById(Number(sq.id)).append(ship);
-          //     };              
-          //   };           
-            
-          //   if (goodToCopy === true) {
-          //     coordinates[shipId] = {};  
-          //     coordinates[shipId].position = "horizontal";              
-          //   };
-               
-          //   coordinates[shipId].coo = containerCoo;     
-          //   name.shipPlace(ships[Number(containerNr[9]-1)], containerCoo, coordinates[shipId].position, "test", shipId);            
-            
-          //  // add blocked coordinates to used coordinates                    
-          //   coordinates[shipId].blocks.forEach(c => {
-          //     usedCoo.push(c);
-          //   });
-
-          //   goodToCopy = false; 
-
-          // };
+          dropDrag(sq);        
         });       
       });  
       //end drag event 
@@ -1419,29 +1187,17 @@ const gameFlow = (() => {
   let gameStart = false;
   let turn = "player1";
   let AI = false;
+  let manualPlacement = true;
 
   const removeAICoo = (coo) => {
-    let length = allCoo.length;
-      console.log(coo)
-      // console.log(`shot${shots[shots.length-1]}`)
-    
-    // if (!coo) {
-    //   for(let i = 0; length > i; i++){                
-    //     if(allCoo[i] == shots[shots.length-1]) {
-    //       allCoo.splice(i, 1);          
-    //     };
-    //   };
-    // } else {
+    let length = allCoo.length;     
       coo.forEach(c => {        
         for(let i = 0; length > i; i++){                         
           if(allCoo[i] == c) {           
             allCoo.splice(i, 1);          
           };
         };
-      }); 
-      console.log(allCoo)     
-    // }; 
-    
+      });    
   };
   const player1Choice = () => {
     player1 = player("player1");
@@ -1460,6 +1216,7 @@ const gameFlow = (() => {
   const randomPlace = document.getElementById("random-button");
   const clearBoard = document.getElementById("clear-button");
   const startGame = document.getElementById("start-button");
+  startGame.disabled = true;
 
   // methods for buttons
   const zeroChoices = () => {    
@@ -1499,7 +1256,40 @@ const gameFlow = (() => {
       player2.placeShips.resetPlayer();
     };    
   };  
-
+  const addManualShips = (who) => {
+    let board;
+    let player = (()=> {
+      if (who === "player1") {
+        board = player1.addPlayer.player1Board;
+        return player1;
+      } else {
+        board = player2.addPlayer.player2Board;
+        return player2;
+      };
+    })();   
+    let allShips =  player.placeShips.coordinates;   
+    for (let i = 0; Object.keys(allShips).length > i; i++) {
+      let ship = allShips[Object.keys(allShips)[i]];
+      let position = ship.position;
+      let coor = ship.coo;
+      let length = coor.length;
+      board.shipPlace(length, coor, position);      
+    };
+    removeManualShadows(board);    
+  };
+  const removeManualShadows = (board) => {
+    let coo = board.allCoo;    
+    coo.forEach(c => {
+      let sq = document.getElementById(c);
+      if (sq.hasChildNodes()){        
+        let length = sq.children.length;
+        for(let i = 0; length > i; i++){          
+          sq.removeChild(sq.children[0]);
+        };      
+      };      
+    });
+  };
+ 
   //click events
   PVC.addEventListener("click", () => {
     frontPage.style.display = "none";
@@ -1513,16 +1303,22 @@ const gameFlow = (() => {
     resetBoard();
     resetPlayer(); 
     allChoices(); 
+    manualPlacement = true;
+    startGame.disabled = true;
   });
   randomPlace.addEventListener("click", () => { 
     resetBoard();    
     zeroChoices();
-    randomShips();     
+    randomShips();  
+    manualPlacement= false; 
+    startGame.disabled = false;  
   });  
   clearBoard.addEventListener("click", () => {    
     resetBoard(); 
     allChoices();
     resetPlayer();
+    manualPlacement = true;
+    startGame.disabled = true;
   });
   startGame.addEventListener("click", () => {     
     turn = "player2";
@@ -1537,10 +1333,14 @@ const gameFlow = (() => {
     turn = "player1";  
     gameStart = true;
     allCoo = player1.addPlayer.player1Board.allCoo; 
+    if (manualPlacement === true) {
+      if (AI === true) {
+        addManualShips("player1");
+      };       
+    };    
   });
 
-  //take turns to shoot
-  
+  //take turns to shoot  
   let turnPl = () => {   
     if (gameStart === true) {        
       if (player2.addPlayer.player2Board.hit === false) {
@@ -1568,8 +1368,7 @@ const gameFlow = (() => {
         };
       };
     };   
-  };
-  
+  };  
   
 
   const moveAI = () => {       
@@ -1582,7 +1381,5 @@ const gameFlow = (() => {
   
  return {turnPl, removeAICoo};
 })();
-// player("AI");
 
-// player1.randomShipPlacement();
 

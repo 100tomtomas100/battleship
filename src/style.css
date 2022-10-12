@@ -52,7 +52,10 @@ body {
     border: solid;
 }
 .square {
-    position: relative;    
+    position: relative;   
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10+ */
+    user-select: none;
 }
 .square p {
     height: 100%;
@@ -69,6 +72,9 @@ body {
     height: calc(var(--box-size)/1.5);
     width: 60%;
     display: grid;
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10+ */
+    user-select: none;
 }
 #ship-placement-buttons{
     width: 40%;
