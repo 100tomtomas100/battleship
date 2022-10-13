@@ -130,3 +130,43 @@ body {
     width: 50%;
     height: 50%;
 }
+#victory-msg {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    position: absolute;    
+    height: 100%;
+    width: 100%;
+    display: none;
+    z-index: 10;
+    background: rgba(0, 0, 0, 0.8);
+}
+#who-won {
+    width: 100%;
+    height: 50%;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+    color: white;
+    font-size: 15vw;
+    font-weight: 800;   
+}
+#returnMenu {
+    width: 100%;
+    height: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#returnMenuB {
+    width: 40%;
+    height: 15%;
+}
+@media only screen and (min-width: 600px) {
+    #who-won {
+        font-size: 8vw;
+    }
+    #returnMenuB {        
+        height: 20%;
+    }
+}
