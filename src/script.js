@@ -1446,5 +1446,5 @@ const gameFlow = (() => {
   
  return {turnPl, removeAICoo, gameOver, allCoo};
 })();
-document.getElementById("intro-video").play();
+
 // document.getElementById("who-won").innerHTML = "PLAYER2<br>win!!"
