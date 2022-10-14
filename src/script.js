@@ -1336,7 +1336,6 @@ const gameFlow = (() => {
     turn = "player1";
     PageRemoveAni("front-page-top", "front-page-bottom", "front-page");
     document.getElementById("intro-video").src ="";
-    document.getElementById("user-ship-placement").style.display = "block";
     document.getElementById("intro-video-upper").src ="intro.mp4";
     document.getElementById("intro-video-down").src ="intro.mp4";
     

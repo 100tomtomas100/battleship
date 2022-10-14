@@ -165,25 +165,18 @@ body {
     height: 15%;
 }
 #intro-video{
-    position: fixed;
-    z-index: -1;
-   
+    position: fixed;   
 }
 #intro-video-upper{     
     position: fixed;
-    object-fit: cover;
-    z-index: -1;
+    object-fit: cover;   
 }
 #intro-video-down{   
     position: fixed;   
-    object-fit: cover;
-    z-index: -1;
+    object-fit: cover;   
 }
 #intro-video-h{  
     z-index: 1;
-}
-#user-ship-placement {
-    display: none
 }
 
 @media only screen and (min-width: 600px) {
