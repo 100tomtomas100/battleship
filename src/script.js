@@ -1334,11 +1334,11 @@ const gameFlow = (() => {
     };       
     AI = true; 
     turn = "player1";
-    PageRemoveAni("front-page-top", "front-page-bottom", "front-page");
+    ;
     document.getElementById("intro-video").src ="";
     document.getElementById("intro-video-upper").src ="intro.mp4";
     document.getElementById("intro-video-down").src ="intro.mp4";
-    
+    PageRemoveAni("front-page-top", "front-page-bottom", "front-page")
   });
   backMenu.addEventListener("click", () => {
     frontPage.style.display = ""; 
