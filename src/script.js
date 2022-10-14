@@ -1310,15 +1310,34 @@ const gameFlow = (() => {
     })();
     place.innerHTML = text;    
   };
- 
+  const PageRemoveAni = (page, page2, pageHide) => {
+    const pageSplit = [{transform: 'translateY(0)'}, 
+    {transform: 'translateY(-100%)'}];
+    const pageSplit2 = [{transform: 'translateY(0)'}, 
+    {transform: 'translateY(100%)'}];
+    const pageSplitTiming = {duration: 2000, iterations: 1,};
+    let pageToSplit = document.getElementById(page);
+    let pageToSplit2 = document.getElementById(page2);
+    let pageToHide = document.getElementById(pageHide);
+    pageToHide.style.overflowY = "hidden";
+    pageToSplit.animate(pageSplit, pageSplitTiming);
+    pageToSplit2.animate(pageSplit2, pageSplitTiming);
+    setTimeout(() => {
+      pageToHide.style.display = "none";      
+    }, "2000");
+  };
   //click events
   PVC.addEventListener("click", () => {
-    frontPage.style.display = "none";
+    // frontPage.style.display = "none";
     if(!player1){
       player1Choice();
     };       
     AI = true; 
     turn = "player1";
+    PageRemoveAni("front-page-top", "front-page-bottom", "front-page");
+    document.getElementById("intro-video").src ="";
+    document.getElementById("intro-video-upper").src ="intro.mp4";
+    document.getElementById("intro-video-down").src ="intro.mp4";
   });
   backMenu.addEventListener("click", () => {
     frontPage.style.display = ""; 
@@ -1361,7 +1380,8 @@ const gameFlow = (() => {
       if (AI === true) {
         addManualShips("player1");        
       };       
-    };       
+    }; 
+    document.querySelector("#body-battle-ship").style.height = "100%";      
   });
   backMainMenu.addEventListener("click", () => {
     frontPage.style.display = ""; 
@@ -1379,7 +1399,7 @@ const gameFlow = (() => {
         result.push(i);      
       };      
       gameFlow.allCoo = result;
-      console.log(gameFlow.allCoo)
+      document.querySelector("#body-battle-ship").style.height = "100vh";
       return result;
     })();    
   });

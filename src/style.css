@@ -1,12 +1,14 @@
 * {
     margin: 0;
-    padding: 0;   
+    padding: 0; 
+    border: 0;  
     box-sizing: border-box;
 }
 :root {
     --box-size: 300px;
 }
 body {
+    height: 100vh;
     background-color:  white;
     display: flex;
     justify-content: center;
@@ -17,7 +19,7 @@ body {
     display: grid;
     gap: 30px; 
 }
-#board-w-coor{
+#board-w-coor{    
     display: grid;
     grid-template-columns: 0.9fr 10fr;
     grid-template-rows: 0.9fr 10fr;
@@ -91,13 +93,11 @@ body {
     font-weight: 800;
     gap: 15px;
 }
-
 .shipChoiceSQ {
     height: calc((var(--box-size)/10)*0.97);
     width: calc((var(--box-size)/10)*0.97);
     background-color: green;
 }
-
 .hoveredSq {
     background-color: black;
 }
@@ -107,7 +107,7 @@ body {
     height: 100%;    
 }
 #front-page-top {
-    height: 50vh;
+    height: 50%;
     width: 100%;
     display: flex;
     justify-content: center;
@@ -116,19 +116,22 @@ body {
     font-weight: 800;
     font-style: italic;
     background-color: cadetblue;
+    overflow: hidden;
 }
 #front-page-bottom {
-    height: 50vh;
+    height: 50%;
     width: 100%;
     display: grid;
     justify-items: center;
     align-items: center;
     gap: 10%;
     background-color: cadetblue;
+    overflow: hidden;
 }
 .game-mode {
     width: 50%;
     height: 50%;
+    z-index: 1;
 }
 #victory-msg {
     display: grid;
@@ -162,11 +165,32 @@ body {
     width: 40%;
     height: 15%;
 }
+#intro-video{
+    position: fixed;
+   
+}
+#intro-video-upper{     
+    position: fixed;
+    object-fit: cover;
+}
+#intro-video-down{   
+    position: fixed;   
+    object-fit: cover;
+}
+#intro-video-h{  
+    z-index: 1;
+}
+
 @media only screen and (min-width: 600px) {
     #who-won {
         font-size: 8vw;
     }
     #returnMenuB {        
         height: 20%;
+    }   
+}
+@media only screen and (min-width: 1190px) { 
+    #intro-video-down, #intro-video-upper, #intro-video {
+        width: 100%;
     }
 }

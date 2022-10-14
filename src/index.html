@@ -8,7 +8,7 @@
     <script src="script.js" defer></script>
     <title>Battleship</title>
 </head>
-<body>
+<body id="body-battle-ship">
     <div id="user-ship-placemet">
         <div id="place-the-ships">
             <div id="board-w-coor">
@@ -32,9 +32,20 @@
             </div>            
         </div>
     </div>
-    <div id="front-page">
-        <div id="front-page-top">BATTLESHIP</div>
+    <div id="front-page"> 
+        <video autoplay loop muted id="intro-video" >
+            <source src="intro.mp4" type="video/mp4">
+        </video>       
+        <div id="front-page-top">
+        <video autoplay muted id="intro-video-upper" >
+            <source src="" type="video/mp4">
+        </video>    
+           <h3 id="intro-video-h">BATTLESHIP</h3> 
+        </div>
         <div id="front-page-bottom">
+            <video autoplay muted id="intro-video-down" >
+                <source src="" type="video/mp4">
+            </video>
             <button class="game-mode" id="PVP">Player Vs Player</button>
             <button class="game-mode" id="PVC">Player Vs Computer</button>
         </div>
