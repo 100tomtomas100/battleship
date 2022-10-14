@@ -1310,6 +1310,15 @@ const gameFlow = (() => {
     })();
     place.innerHTML = text;    
   };
+  const videoOpacityAni = (page) => {
+    const disappear = [{opacity: "1"}, {opacity: "0"}];
+    const pagedisapp = document.getElementById(page);
+    const pageSplitTiming = {duration: 2000, iterations: 1,};
+    pagedisapp.animate(disappear, pageSplitTiming);
+    setTimeout(() => {
+      pagedisapp.style.display = "none";      
+    }, "2000");
+  }
   const PageRemoveAni = (page, page2, pageHide) => {
     const pageSplit = [{transform: 'translateY(0)'}, 
     {transform: 'translateY(-100%)'}];
@@ -1335,10 +1344,11 @@ const gameFlow = (() => {
     AI = true; 
     turn = "player1";
     ;
-    document.getElementById("intro-video").src ="";
-    document.getElementById("intro-video-upper").src ="intro.mp4";
-    document.getElementById("intro-video-down").src ="intro.mp4";
-    PageRemoveAni("front-page-top", "front-page-bottom", "front-page")
+    // document.getElementById("intro-video").src ="";
+    // document.getElementById("intro-video-upper").src ="intro.mp4";
+    // document.getElementById("intro-video-down").src ="intro.mp4";
+    // PageRemoveAni("front-page-top", "front-page-bottom", "front-page")
+    videoOpacityAni("front-page")
   });
   backMenu.addEventListener("click", () => {
     frontPage.style.display = ""; 
