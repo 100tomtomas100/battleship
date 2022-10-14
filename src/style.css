@@ -115,8 +115,7 @@ body {
     align-items: center;
     font-size: 2.5em;
     font-weight: 800;
-    font-style: italic;
-    background-color: cadetblue;
+    font-style: italic;    
     overflow: hidden;
 }
 #front-page-bottom {
@@ -125,8 +124,7 @@ body {
     display: grid;
     justify-items: center;
     align-items: center;
-    gap: 10%;
-    background-color: cadetblue;
+    gap: 10%;   
     overflow: hidden;
 }
 .game-mode {
@@ -168,18 +166,24 @@ body {
 }
 #intro-video{
     position: fixed;
+    z-index: -1;
    
 }
 #intro-video-upper{     
     position: fixed;
     object-fit: cover;
+    z-index: -1;
 }
 #intro-video-down{   
     position: fixed;   
     object-fit: cover;
+    z-index: -1;
 }
 #intro-video-h{  
     z-index: 1;
+}
+#user-ship-placement {
+    display: none
 }
 
 @media only screen and (min-width: 600px) {
