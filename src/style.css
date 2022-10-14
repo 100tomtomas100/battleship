@@ -3,6 +3,7 @@
     padding: 0; 
     border: 0;  
     box-sizing: border-box;
+    touch-action: manipulation;
 }
 :root {
     --box-size: 300px;
