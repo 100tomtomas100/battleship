@@ -105,7 +105,7 @@ const gameBoard = (player) => {
         const video = document.createElement("video");     
         video.style.height = sqSide;
         video.style.width = sqSide;           
-        video.src = "fire2.mp4";            
+        video.src = "fire3.mp4";            
         video.style.position = "absolute";
         video.autoplay = "true";
         video.muted = "true";            
