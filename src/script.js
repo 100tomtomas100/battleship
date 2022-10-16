@@ -70,7 +70,9 @@ const gameBoard = (player) => {
     coorNum.style.gridTemplateRows = "repeat(10, 1fr)";
     for(let i = 1; i <= 10; i++) {
       let num = coorNum.appendChild(document.createElement("div"));
+      num.style.fontFamily = "Silkscreen, Alkalami, serif";
       let lett = coorLet.appendChild(document.createElement("div"));
+      lett.style.fontFamily = "Silkscreen, Alkalami, serif";
       num.innerHTML = number;
       lett.innerHTML = letters[i];
       number += 1;
@@ -92,6 +94,29 @@ const gameBoard = (player) => {
   const receiveAttack = (shot, s = ships) => { 
     shots.push(shot);
     let shipHit = false; 
+
+    const shotFire = (coo) => {
+      let boardHeight = getComputedStyle(document.querySelector(':root')).getPropertyValue('--box-size');            
+      let sqSide = (Number(boardHeight.slice(0, boardHeight.length-3)) / 10) + "px";            
+      let time = 0;
+      coo.forEach(c => {        
+        setTimeout(() => {
+        let squareV = document.getElementById(c);
+        const video = document.createElement("video");     
+        video.style.height = sqSide;
+        video.style.width = sqSide;           
+        video.src = "fire2.mp4";            
+        video.style.position = "absolute";
+        video.autoplay = "true";
+        video.muted = "true";            
+        video.setAttribute("playsinline", "");
+        squareV.appendChild(video);
+        squareV.style.overflow = "hidden"; 
+        }, time); 
+        time +=300;     
+      });      
+    };
+
     let checkShips = (ship) => { 
       if (ship.sunk === false) {      
       for (let j = 0; ship.shipCoor.length > j; j++) {              
@@ -101,11 +126,12 @@ const gameBoard = (player) => {
         }; 
         if (ship.hit.length === ship.shipCoor.length) {
           ship.sunk = true;
+          shotFire(ship.shipCoor)
           
           // background color of sunken ship
-          for(let j = 0; ship.shipCoor.length > j; j++) {
-            document.getElementById(ship.shipCoor[j]).style.backgroundColor = "green";
-          };
+          // for(let j = 0; ship.shipCoor.length > j; j++) {
+          //   document.getElementById(ship.shipCoor[j]).style.backgroundColor = "green";
+          // };
 
           // mark squares around sunken ship
           for(let i = 0; ship.sunkBl.length > i; i++) {            
@@ -113,7 +139,7 @@ const gameBoard = (player) => {
             if (!sq.hasChildNodes()) {
               let text = document.createElement("p");
               sq.appendChild(text);
-              text.style.position = "absolute";            
+              text.style.position = "absolute";                    
               text.innerHTML = "&#9679;";
             };            
           };
@@ -473,7 +499,26 @@ const player = (name) => {
           name = player2Board;
           square = squareP2;          
         };
-        let markShot = (sq) => {    
+        let markShot = (sq) => {   
+          const shotAni = (where) => {            
+            const shotCh = [{opacity: "0"}, {opacity: "1"}];
+            const timing = {duration: 500, iterations: 1};
+            where.animate(shotCh, timing);
+          };
+          // const shotFire = (where) => {
+          //   const video = document.createElement("video");                     
+          //   let boardHeight = getComputedStyle(document.querySelector(':root')).getPropertyValue('--box-size');            
+          //   let sqSide = (Number(boardHeight.slice(0, boardHeight.length-3)) / 10) + "px";            
+          //   video.style.height = sqSide;
+          //   video.style.width = sqSide;           
+          //   video.src = "fire2.mp4";            
+          //   video.style.position = "absolute";
+          //   video.autoplay = "true";
+          //   video.muted = "true";            
+          //   video.setAttribute("playsinline", "");
+          //   sq.appendChild(video);
+          //   sq.style.overflow = "hidden";
+          // };
           if (!sq.hasChildNodes()) {              
             let shot = name.receiveAttack(sq.id);
             let text = document.createElement("p");           
@@ -481,16 +526,18 @@ const player = (name) => {
             text.style.position = "absolute";
             if(shot === "missed" && text){
               text.innerHTML = "&#x2716;";
+              shotAni(text);
             } else {
+              // shotFire()
               text.innerHTML = "&#x274C;";
               text.style.fontSize = "150%";
+              shotAni(text);
             };
             if(title === "player1") {               
               gameFlow.removeAICoo([sq.id]) 
             };            
-          }; 
-          
-          gameFlow.turnPl();        
+          };           
+          gameFlow.turnPl();                
         };
         square.forEach(s => {  
           let sq =  document.getElementById(s)     
@@ -539,8 +586,9 @@ const player = (name) => {
         shipContainer.id = `container${i}`;
         shipContainer.className = `container${i}`;
         numtext = document.getElementById(`choice${i}`).appendChild(document.createElement("p"));
-        numtext.id = `text${i}`
-        numtext.innerHTML = ` \u2715 ${amounts[`container${i}`]}`
+        numtext.id = `text${i}`;
+        numtext.style.fontFamily = "Silkscreen, Alkalami, serif";
+        numtext.innerHTML = ` \u2715 ${amounts[`container${i}`]}`;
         shipContainer.style.display = "flex";
         for (let j = 1; j<= ships[i-1]; j++) {
           let ship = shipContainer.appendChild(document.createElement("div"));
@@ -1100,7 +1148,9 @@ const player = (name) => {
                 };
               });              
               if (counter === 4) {
-                document.getElementById("start-button").disabled = false;
+                let startBtn = document.getElementById("start-button");
+                startBtn.disabled = false;
+                startBtn.style.opacity = "1";
               };              
             })();
             
@@ -1284,10 +1334,10 @@ const gameFlow = (() => {
     removeManualShadows(board);    
   };
   const removeManualShadows = (board) => {
-    let coo = board.allCoo;    
+    let coo = allCoo;     
     coo.forEach(c => {
       let sq = document.getElementById(c);
-      if (sq.hasChildNodes()){        
+      if (sq.hasChildNodes()){              
         let length = sq.children.length;
         for(let i = 0; length > i; i++){          
           sq.removeChild(sq.children[0]);
@@ -1308,47 +1358,54 @@ const gameFlow = (() => {
         return "PLAYER1<br>WINS!!!";
       }
     })();
+    place.style.fontFamily = "Silkscreen, Alkalami, serif";
     place.innerHTML = text;    
   };
-  const videoOpacityAni = (page) => {
+  const videoOpacityAni = (page, page2, removeTemp) => {
+    let hideTemp;
+    if(removeTemp) {
+      hideTemp = document.getElementById(removeTemp);
+      hideTemp.style.display = "none";
+    };    
     const disappear = [{opacity: "1"}, {opacity: "0"}];
-    const pagedisapp = document.getElementById(page);
-    const pageSplitTiming = {duration: 2000, iterations: 1,};
-    pagedisapp.animate(disappear, pageSplitTiming);
+    const appear = [{opacity: "0"}, {opacity: "1"}];
+    const pagedisapp = document.getElementById(page);    
+    const pageSplitTiming = {duration: 1000, iterations: 1,};
+    if(page2){     
+      const pageapp = document.getElementById(page2); 
+      pageapp.animate(appear, pageSplitTiming);
+      pageapp.style.display = "grid";     
+    };   
+    pagedisapp.animate(disappear, pageSplitTiming);    
     setTimeout(() => {
-      pagedisapp.style.display = "none";      
-    }, "2000");
-  }
-  const PageRemoveAni = (page, page2, pageHide) => {
-    const pageSplit = [{transform: 'translateY(0)'}, 
+      pagedisapp.style.display = "none"; 
+      if(removeTemp){
+        hideTemp.style.display = "";
+      };     
+    }, "1000");
+  };
+  const pageMoveAni = (page, page2) => {
+    const pageOldT = [{transform: 'translateY(0)'}, 
     {transform: 'translateY(-100%)'}];
-    const pageSplit2 = [{transform: 'translateY(0)'}, 
-    {transform: 'translateY(100%)'}];
-    const pageSplitTiming = {duration: 2000, iterations: 1,};
-    let pageToSplit = document.getElementById(page);
-    let pageToSplit2 = document.getElementById(page2);
-    let pageToHide = document.getElementById(pageHide);
-    pageToHide.style.overflowY = "hidden";
-    pageToSplit.animate(pageSplit, pageSplitTiming);
-    pageToSplit2.animate(pageSplit2, pageSplitTiming);
+    const pageNewT = [{transform: 'translateY(100%)'}, 
+    {transform: 'translateY(0)'}];
+    const pageSplitTiming = {duration: 1000, iterations: 1,};
+    let pageOld = document.getElementById(page);
+    let pageNew = document.getElementById(page2);    
+    pageOld.animate(pageOldT, pageSplitTiming);
+    pageNew.animate(pageNewT, pageSplitTiming);
     setTimeout(() => {
-      pageToHide.style.display = "none";      
-    }, "2000");
+      pageOld.style.display = "none";      
+    }, "1000");
   };
   //click events
-  PVC.addEventListener("click", () => {
-    // frontPage.style.display = "none";
+  PVC.addEventListener("click", () => {    
     if(!player1){
       player1Choice();
     };       
     AI = true; 
-    turn = "player1";
-    ;
-    // document.getElementById("intro-video").src ="";
-    // document.getElementById("intro-video-upper").src ="intro.mp4";
-    // document.getElementById("intro-video-down").src ="intro.mp4";
-    // PageRemoveAni("front-page-top", "front-page-bottom", "front-page")
-    videoOpacityAni("front-page")
+    turn = "player1";    
+    videoOpacityAni("front-page");   
   });
   backMenu.addEventListener("click", () => {
     frontPage.style.display = ""; 
@@ -1357,13 +1414,15 @@ const gameFlow = (() => {
     allChoices(); 
     manualPlacement = true;
     startGame.disabled = true;
+    startGame.style.opacity = "0.2";
   });
   randomPlace.addEventListener("click", () => { 
     resetBoard();    
     zeroChoices();
     randomShips();  
     manualPlacement= false; 
-    startGame.disabled = false;  
+    startGame.disabled = false;
+    startGame.style.opacity = "1";  
   });  
   clearBoard.addEventListener("click", () => {    
     resetBoard(); 
@@ -1371,11 +1430,12 @@ const gameFlow = (() => {
     resetPlayer();
     manualPlacement = true;
     startGame.disabled = true;
+    startGame.style.opacity = "0.2";
   });
   startGame.addEventListener("click", () => {     
     turn = "player2";
-    document.getElementById("ships-and-navigation").style.display = "none";
-    document.getElementById("board-w-coor2").style.display = "grid";
+    // document.getElementById("ships-and-navigation").style.display = "none";
+    // document.getElementById("board-w-coor2").style.display = "grid";
     if(AI === true) {      
       if(!player2){
         player2ChoiceAI();
@@ -1392,7 +1452,10 @@ const gameFlow = (() => {
         addManualShips("player1");        
       };       
     }; 
-    document.querySelector("#body-battle-ship").style.height = "100%";      
+    document.querySelector("#body-battle-ship").style.height = "100%";  
+    videoOpacityAni("ships-and-navigation", "board-w-coor2");   
+    document.getElementById("board-w-coor").animate([{opacity: "1"}, {opacity: "0.5"}], 1000);
+    document.getElementById("board-w-coor").style.opacity = "0.5";
   });
   backMainMenu.addEventListener("click", () => {
     frontPage.style.display = ""; 
@@ -1401,9 +1464,11 @@ const gameFlow = (() => {
     allChoices(); 
     manualPlacement = true;
     startGame.disabled = true;
-    document.getElementById("victory-msg").style.display = "none";
+    startGame.style.opacity = "0.2";
+    // document.getElementById("victory-msg").style.display = "none";
     document.getElementById("ships-and-navigation").style.display = "flex";
     document.getElementById("board-w-coor2").style.display = "none";
+    document.getElementById("board-w-coor").style.opacity = "1";
     allCoo = (() => {      
       let result = [];
       for(let i = 1; 101 > i; i++) {
@@ -1412,7 +1477,11 @@ const gameFlow = (() => {
       gameFlow.allCoo = result;
       document.querySelector("#body-battle-ship").style.height = "100vh";
       return result;
-    })();    
+    })(); 
+    // pageMoveAni("victory-msg", "front-page");  
+    // document.getElementById("user-ship-placement").style.display = "none";
+    videoOpacityAni("victory-msg", "front-page", "user-ship-placement");
+    // document.getElementById("user-ship-placement").style.display = "";
   });
 
   //take turns to shoot  
@@ -1424,7 +1493,9 @@ const gameFlow = (() => {
         player1.mode = "war";
         player2.addPlayer.player2Board.hit = "";
         if(AI === true) {
-          moveAI();
+          setTimeout(() => {
+            moveAI();  
+          }, "500");          
         };
       } else if (player1.addPlayer.player1Board.hit === false) {
         turn = "player2";
@@ -1439,7 +1510,9 @@ const gameFlow = (() => {
         player1.addPlayer.player1Board.hit = "";
       } else {
         if(AI === true) {
-          moveAI();
+          setTimeout(() => {
+            moveAI();    
+          }, "500");          
         };
       };
     };   

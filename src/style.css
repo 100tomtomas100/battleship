@@ -6,15 +6,17 @@
     touch-action: manipulation;
 }
 :root {
-    --box-size: 300px;
+    --box-size: 300px
 }
-body {
-    height: 100vh;
+body {   
     background-color:  white;
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
+}
+#user-ship-placement {
+   
 }
 #place-the-ships {
     display: grid;
@@ -114,9 +116,7 @@ body {
     justify-content: center;
     align-items: center;
     font-size: 2.5em;
-    font-weight: 800;
-    font-style: italic;    
-    overflow: hidden;
+    font-weight: 800;  
 }
 #front-page-bottom {
     height: 50%;
@@ -124,13 +124,27 @@ body {
     display: grid;
     justify-items: center;
     align-items: center;
-    gap: 10%;   
-    overflow: hidden;
+    gap: 10%;  
 }
 .game-mode {
-    width: 50%;
+    width: 80%;
     height: 50%;
     z-index: 1;
+    font-size: 1em;
+    border: black 3px dotted;
+    font-family: 'Silkscreen', serif;
+    font-weight: 800;
+    opacity: 0.8;
+}
+.ship-placement-button {
+    font-family: 'Silkscreen', serif;
+    border: black 3px dotted;
+    font-weight: 800;
+    background-color: navy;
+    color: white;
+}
+#start-button {
+    opacity: 0.2;
 }
 #victory-msg {
     display: grid;
@@ -140,7 +154,7 @@ body {
     width: 100%;
     display: none;
     z-index: 10;
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(1, 7, 82, 0.8);
 }
 #who-won {
     width: 100%;
@@ -163,22 +177,21 @@ body {
 #returnMenuB {
     width: 40%;
     height: 15%;
+    font-size: 0.8em;
+    border: black 3px dotted;
+    font-family: 'Silkscreen', serif;
+    font-weight: 800;
+    opacity: 0.85;
 }
 #intro-video{
-    position: fixed;   
+    position: fixed;       
 }
-#intro-video-upper{     
-    position: fixed;
-    object-fit: cover;   
-}
-#intro-video-down{   
-    position: fixed;   
-    object-fit: cover;   
-}
-#intro-video-h{  
+#intro-video-h{ 
+    font-family: 'Silkscreen', 'Alkalami', serif; 
     z-index: 1;
+    color: rgb(1, 7, 82);
+    text-shadow: 4px 4px white;
 }
-
 @media only screen and (min-width: 600px) {
     #who-won {
         font-size: 8vw;
