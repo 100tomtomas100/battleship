@@ -25,6 +25,8 @@ body {
     grid-template-rows: 0.9fr 10fr;
 }
 #board-w-coor2{
+    position: absolute;
+    top: 0;
     display: none;
     grid-template-columns: 0.9fr 10fr;
     grid-template-rows: 0.9fr 10fr;
@@ -188,6 +190,9 @@ body {
     z-index: 1;
     color: rgb(1, 7, 82);
     text-shadow: 4px 4px white;
+}
+#bottom-part {
+    position: relative;
 }
 @media only screen and (min-width: 600px) {
     #who-won {

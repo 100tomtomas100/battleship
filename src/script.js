@@ -500,10 +500,14 @@ const player = (name) => {
           square = squareP2;          
         };
         let markShot = (sq) => {   
-          const shotAni = (where) => {            
+          const shotAni = (where, hit) => {            
             const shotCh = [{opacity: "0"}, {opacity: "1"}];
             const timing = {duration: 500, iterations: 1};
+            const size = [{fontSize: "0"}, {fontSize: "350%"}]
             where.animate(shotCh, timing);
+            if (hit){
+              where.animate(size, timing)
+            }
           };          
           if (!sq.hasChildNodes()) {              
             let shot = name.receiveAttack(sq.id);
@@ -517,7 +521,7 @@ const player = (name) => {
               // shotFire()
               text.innerHTML = "&#x274C;";
               text.style.fontSize = "150%";
-              shotAni(text);
+              shotAni(text, true);
             };
             if(title === "player1") {               
               gameFlow.removeAICoo([sq.id]) 
@@ -1357,19 +1361,24 @@ const gameFlow = (() => {
     const appear = [{opacity: "0"}, {opacity: "1"}];
     const pagedisapp = document.getElementById(page);    
     const pageSplitTiming = {duration: 1000, iterations: 1,};
-    
+    let pageapp;
     if(page2){     
-      const pageapp = document.getElementById(page2); 
+      pageapp = document.getElementById(page2);
+      pageapp.style.display = "grid"; 
       pageapp.animate(appear, pageSplitTiming);
-      pageapp.style.display = "grid";
-      if(ifSlide) {
-        const pageNewT = [{transform: 'translateY(0)'}, 
-        {transform: 'translateY(-70%)'}];
-        pageapp.animate(pageNewT, pageSplitTiming)
-      }     
+      
+      // if(ifSlide) {        
+        // const pageNewT = [{transform: 'translateY(100%)'}, 
+        // {transform: 'translateY(0)'}];
+        // pageapp.animate(appear, pageSplitTiming);
+        // pageapp.style.position = "relative";
+      // }     
     };   
     pagedisapp.animate(disappear, pageSplitTiming);    
     setTimeout(() => {
+      if(ifSlide) {
+        pageapp.style.position = "relative";
+      }
       pagedisapp.style.display = "none"; 
       if(removeTemp){
         hideTemp.style.display = "";
@@ -1462,6 +1471,7 @@ const gameFlow = (() => {
     document.getElementById("ships-and-navigation").style.display = "flex";
     document.getElementById("board-w-coor2").style.display = "none";
     document.getElementById("board-w-coor").style.opacity = "1";
+    document.getElementById("board-w-coor2").style.position = "absolute";
     allCoo = (() => {      
       let result = [];
       for(let i = 1; 101 > i; i++) {
