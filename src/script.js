@@ -109,6 +109,7 @@ const gameBoard = (player) => {
         fire.style.position = "absolute";
         squareV.appendChild(fire);       
         squareV.style.overflow = "hidden"; 
+        squareV.style.backgroundColor  = "green";
         }, time); 
         time +=200;     
       });      
@@ -127,7 +128,9 @@ const gameBoard = (player) => {
           
           // background color of sunken ship
           // for(let j = 0; ship.shipCoor.length > j; j++) {
+          //   setTimeout(() => {
           //   document.getElementById(ship.shipCoor[j]).style.backgroundColor = "green";
+          //   }, 1000);
           // };
 
           // mark squares around sunken ship
