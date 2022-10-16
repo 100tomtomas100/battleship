@@ -97,7 +97,7 @@ const gameBoard = (player) => {
 
     const shotFire = (coo) => {
       let boardHeight = getComputedStyle(document.querySelector(':root')).getPropertyValue('--box-size');            
-      let sqSide = (Number(boardHeight.slice(0, boardHeight.length-3)) / 10) + "px";            
+      let sqSide = (Number(boardHeight.slice(0, boardHeight.length-2)) / 10) + "px";       
       let time = 0;
       coo.forEach(c => {        
         setTimeout(() => {
@@ -1444,7 +1444,7 @@ const gameFlow = (() => {
         addManualShips("player1");        
       };       
     }; 
-    document.querySelector("#body-battle-ship").style.height = "100%";  
+    // document.querySelector("#body-battle-ship").style.height = "100%";  
     videoOpacityAni("ships-and-navigation", "board-w-coor2","", true);
     // document.getElementById("board-w-coor2").style.position = "absolute";   
     document.getElementById("board-w-coor").animate([{opacity: "1"}, {opacity: "0.5"}], 1000);
@@ -1468,13 +1468,14 @@ const gameFlow = (() => {
         result.push(i);      
       };      
       gameFlow.allCoo = result;
-      document.querySelector("#body-battle-ship").style.height = "100vh";
+      // document.querySelector("#body-battle-ship").style.height = "100%";      
       return result;
     })(); 
     // pageMoveAni("victory-msg", "front-page");  
     // document.getElementById("user-ship-placement").style.display = "none";
     videoOpacityAni("victory-msg", "front-page", "user-ship-placement");
     // document.getElementById("user-ship-placement").style.display = "";
+    frontPage.style.display = "";    
   });
 
   //take turns to shoot  
