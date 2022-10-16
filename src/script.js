@@ -102,15 +102,12 @@ const gameBoard = (player) => {
       coo.forEach(c => {        
         setTimeout(() => {
         let squareV = document.getElementById(c);
-        const video = document.createElement("video");     
-        video.style.height = sqSide;
-        video.style.width = sqSide;           
-        video.src = "fire3.mp4";            
-        video.style.position = "absolute";
-        video.autoplay = "true";
-        video.muted = "true";            
-        video.setAttribute("playsinline", "");
-        squareV.appendChild(video);
+        const fire = document.createElement("img");
+        fire.style.height = sqSide;
+        fire.style.width = sqSide;
+        fire.src = "fire.gif"; 
+        fire.style.position = "absolute";
+        squareV.appendChild(fire);       
         squareV.style.overflow = "hidden"; 
         }, time); 
         time +=200;     
@@ -504,21 +501,7 @@ const player = (name) => {
             const shotCh = [{opacity: "0"}, {opacity: "1"}];
             const timing = {duration: 500, iterations: 1};
             where.animate(shotCh, timing);
-          };
-          // const shotFire = (where) => {
-          //   const video = document.createElement("video");                     
-          //   let boardHeight = getComputedStyle(document.querySelector(':root')).getPropertyValue('--box-size');            
-          //   let sqSide = (Number(boardHeight.slice(0, boardHeight.length-3)) / 10) + "px";            
-          //   video.style.height = sqSide;
-          //   video.style.width = sqSide;           
-          //   video.src = "fire2.mp4";            
-          //   video.style.position = "absolute";
-          //   video.autoplay = "true";
-          //   video.muted = "true";            
-          //   video.setAttribute("playsinline", "");
-          //   sq.appendChild(video);
-          //   sq.style.overflow = "hidden";
-          // };
+          };          
           if (!sq.hasChildNodes()) {              
             let shot = name.receiveAttack(sq.id);
             let text = document.createElement("p");           
