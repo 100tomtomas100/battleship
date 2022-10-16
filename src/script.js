@@ -113,7 +113,7 @@ const gameBoard = (player) => {
         squareV.appendChild(video);
         squareV.style.overflow = "hidden"; 
         }, time); 
-        time +=300;     
+        time +=200;     
       });      
     };
 
