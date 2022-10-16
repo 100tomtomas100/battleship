@@ -1344,7 +1344,7 @@ const gameFlow = (() => {
     place.style.fontFamily = "Silkscreen, Alkalami, serif";
     place.innerHTML = text;    
   };
-  const videoOpacityAni = (page, page2, removeTemp) => {
+  const videoOpacityAni = (page, page2, removeTemp, ifSlide) => {
     let hideTemp;
     if(removeTemp) {
       hideTemp = document.getElementById(removeTemp);
@@ -1354,10 +1354,16 @@ const gameFlow = (() => {
     const appear = [{opacity: "0"}, {opacity: "1"}];
     const pagedisapp = document.getElementById(page);    
     const pageSplitTiming = {duration: 1000, iterations: 1,};
+    
     if(page2){     
       const pageapp = document.getElementById(page2); 
       pageapp.animate(appear, pageSplitTiming);
-      pageapp.style.display = "grid";     
+      pageapp.style.display = "grid";
+      if(ifSlide) {
+        const pageNewT = [{transform: 'translateY(0)'}, 
+        {transform: 'translateY(-70%)'}];
+        pageapp.animate(pageNewT, pageSplitTiming)
+      }     
     };   
     pagedisapp.animate(disappear, pageSplitTiming);    
     setTimeout(() => {
@@ -1367,20 +1373,20 @@ const gameFlow = (() => {
       };     
     }, "1000");
   };
-  const pageMoveAni = (page, page2) => {
-    const pageOldT = [{transform: 'translateY(0)'}, 
-    {transform: 'translateY(-100%)'}];
-    const pageNewT = [{transform: 'translateY(100%)'}, 
-    {transform: 'translateY(0)'}];
-    const pageSplitTiming = {duration: 1000, iterations: 1,};
-    let pageOld = document.getElementById(page);
-    let pageNew = document.getElementById(page2);    
-    pageOld.animate(pageOldT, pageSplitTiming);
-    pageNew.animate(pageNewT, pageSplitTiming);
-    setTimeout(() => {
-      pageOld.style.display = "none";      
-    }, "1000");
-  };
+  // const pageMoveAni = (page, page2) => {
+  //   const pageOldT = [{transform: 'translateY(0)'}, 
+  //   {transform: 'translateY(-100%)'}];
+  //   const pageNewT = [{transform: 'translateY(100%)'}, 
+  //   {transform: 'translateY(0)'}];
+  //   const pageSplitTiming = {duration: 1000, iterations: 1,};
+  //   let pageOld = document.getElementById(page);
+  //   let pageNew = document.getElementById(page2);    
+  //   pageOld.animate(pageOldT, pageSplitTiming);
+  //   pageNew.animate(pageNewT, pageSplitTiming);
+  //   setTimeout(() => {
+  //     pageOld.style.display = "none";        
+  //   }, "1000");
+  // };
   //click events
   PVC.addEventListener("click", () => {    
     if(!player1){
@@ -1436,7 +1442,8 @@ const gameFlow = (() => {
       };       
     }; 
     document.querySelector("#body-battle-ship").style.height = "100%";  
-    videoOpacityAni("ships-and-navigation", "board-w-coor2");   
+    videoOpacityAni("ships-and-navigation", "board-w-coor2","", true);
+    // document.getElementById("board-w-coor2").style.position = "absolute";   
     document.getElementById("board-w-coor").animate([{opacity: "1"}, {opacity: "0.5"}], 1000);
     document.getElementById("board-w-coor").style.opacity = "0.5";
   });
@@ -1478,7 +1485,7 @@ const gameFlow = (() => {
         if(AI === true) {
           setTimeout(() => {
             moveAI();  
-          }, "500");          
+          }, "300");          
         };
       } else if (player1.addPlayer.player1Board.hit === false) {
         turn = "player2";
@@ -1495,7 +1502,7 @@ const gameFlow = (() => {
         if(AI === true) {
           setTimeout(() => {
             moveAI();    
-          }, "500");          
+          }, "300");          
         };
       };
     };   
