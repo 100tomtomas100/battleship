@@ -135,6 +135,8 @@ body {
     font-family: 'Silkscreen', serif;
     font-weight: 800;
     opacity: 0.8;
+    color: white;
+    background-color: navy;
 }
 .ship-placement-button {
     font-family: 'Silkscreen', serif;
