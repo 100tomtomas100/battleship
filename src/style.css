@@ -16,13 +16,13 @@ body {
     position: relative;
 }
 #place-the-ships {
-    display: grid;
-    gap: 30px; 
+    display: grid;    
 }
 #board-w-coor{    
     display: grid;
     grid-template-columns: 0.9fr 10fr;
-    grid-template-rows: 0.9fr 10fr;
+    grid-template-rows: 0.9fr 10fr; 
+    padding-bottom: 30px;    
 }
 #board-w-coor2{
     position: absolute;
@@ -30,6 +30,7 @@ body {
     display: none;
     grid-template-columns: 0.9fr 10fr;
     grid-template-rows: 0.9fr 10fr;
+    padding-bottom: 30px;   
 }
 #coor-let, #coor-let2{
     grid-area: 1/2/2/3; 
@@ -193,8 +194,24 @@ body {
     color: rgb(1, 7, 82);
     text-shadow: 4px 4px white;
 }
-#bottom-part {
+#bottom-part {      
     position: relative;
+    
+}
+#next-player {
+    display: none;
+    opacity: 0.2;
+}
+#player-name-wrapper {
+    height: 50px;
+    width: 100%;
+    font-family: 'Silkscreen', 'Alkalami', serif;
+    color: navy;
+    text-shadow: 1px 1px green;
+    display: none;
+    font-size: 20px;
+    justify-content: center;
+    align-items: center;   
 }
 @media only screen and (min-width: 600px) {
     #who-won {

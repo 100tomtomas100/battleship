@@ -2,9 +2,9 @@
 // import sheet from './style.css' assert { type: 'css' };
 
 // construct new ship
-const shipFactory = (coor, blSq, player) => {  
+const shipFactory = (coor, blSq, player) => {   
   let shipCoor = [];
-  let sunkBl = [];
+  let sunkBl = [];  
   if (player === "player1") {
     shipCoor = coor;
     sunkBl = blSq; 
@@ -22,11 +22,14 @@ const shipFactory = (coor, blSq, player) => {
   
   for(let i = 0; shipCoor.length > i; i++){
     let colorShip;
-    if(player === "player2" || player === "AI"){
+    if(player === "AI"){
       colorShip = document.getElementById(`p2${coor[i]}`);
-    } else {
+    } else if(player === "player2") {
+      // colorShip = document.getElementById(`p2${coor[i]}`);
+      // colorShip.style.backgroundColor = "green";
+    } else {      
       colorShip = document.getElementById(coor[i]);
-      colorShip.style.backgroundColor = "green";
+      colorShip.style.backgroundColor = "green";                   
     };   
     // colorShip.style.backgroundColor = "green";
   };
@@ -215,20 +218,32 @@ const gameBoard = (player) => {
       const placement = (() => {
         if (pos) {
           return pos;
-        } else {
-        let random = Math.round(Math.random());   
-        if (random === 0) {
-          return "vertical";
-        } else {
-          return "horizontal"
-        };
+        } else if (coord){
+          let diff;
+          if(coord.length > 1){            
+            diff = coord[1] - coord[0];                
+          } else {
+            diff = 1;
+          };          
+          if (diff === 1) {
+            return "horizontal";
+          } else {
+            return "vertical";
+          };
+        } else {         
+          let random = Math.round(Math.random());   
+          if (random === 0) {
+            return "vertical";
+          } else {
+            return "horizontal"
+          };
         };
       })();
 
 
     // check if it is possible to place the ship on the coordinates
     // if random choice run function until the available coordinates are found
-    const shipCoo = (coordinates) => {          
+    const shipCoo = (coordinates) => {                
       let coo = coordinates;
 
       //if no coordinates provided choose randomly
@@ -240,7 +255,7 @@ const gameBoard = (player) => {
 
         //get the other coordinates depending if horizontal or vertical and length
         if (placement === "horizontal") {         
-          for(let i = 1; length > i; i++) {
+          for(let i = 1; length > i; i++) {           
             coo.push(randomCoo + i);
           };
         } else if (placement === "vertical") {         
@@ -564,7 +579,7 @@ const player = (name) => {
   
   // manual ship placement    
     const placeShips = (() => {
-    if (title != "AI"){    
+    if (title === "player1"){    
       //ship choices
       const ships = [4, 3 ,2 ,1];
       const container =  document.getElementById("place-ships");
@@ -702,10 +717,8 @@ const player = (name) => {
           container.style.position ="absolute"
           let touchLocation = e.targetTouches[0];
           let containerX = container.style.left = touchLocation.pageX + 'px';
-          let containerY = container.style.top = touchLocation.pageY + 'px';
-          console.log()
-          console.log(document.elementFromPoint(containerX, containerY))
-        })
+          let containerY = container.style.top = touchLocation.pageY + 'px';         
+        });
 
         container.addEventListener("dragend", () => {
           
@@ -1152,8 +1165,11 @@ const player = (name) => {
               });              
               if (counter === 4) {
                 let startBtn = document.getElementById("start-button");
+                let nextBtn = document.getElementById("next-player");
                 startBtn.disabled = false;
                 startBtn.style.opacity = "1";
+                nextBtn.disabled = false;
+                nextBtn.style.opacity = "1";
               };              
             })();
             
@@ -1224,7 +1240,7 @@ const player = (name) => {
     })();
   
   
-  return {enemy, randomShipPlacement, addPlayer, placeShips, mode, shoot}  
+  return {title, enemy, randomShipPlacement, addPlayer, placeShips, mode, shoot}  
 };
 
 let player1;
@@ -1264,12 +1280,15 @@ const gameFlow = (() => {
 
   //navbar buttons
   const PVC = document.getElementById("PVC"); 
+  const PVP = document.getElementById("PVP");
   const frontPage = document.getElementById("front-page");
   const backMenu = document.getElementById("return-button");
   const randomPlace = document.getElementById("random-button");
   const clearBoard = document.getElementById("clear-button");
   const startGame = document.getElementById("start-button");
   startGame.disabled = true;
+  const nextPlayer = document.getElementById("next-player");
+  nextPlayer.disabled = true;
   const backMainMenu = document.getElementById("returnMenuB");
 
   // methods for buttons
@@ -1308,9 +1327,9 @@ const gameFlow = (() => {
   };
   const resetPlayer = (GO) => {
     if (GO) {      
-      if(AI === false){
-        player2.placeShips.resetPlayer();  
-      };           
+      // if(AI === false){
+      //   player2.placeShips.resetPlayer();  
+      // };           
       player1.placeShips.resetPlayer();       
     } else  if (turn === "player2" && !GO && AI === false) {      
       player2.placeShips.resetPlayer();
@@ -1318,25 +1337,37 @@ const gameFlow = (() => {
       player1.placeShips.resetPlayer();      
     };    
   };  
-  const addManualShips = (who) => {
+  const addManualShips = (who, coo) => {
     let board;
-    let player = (()=> {
+    let player = (()=> {          
       if (who === "player1") {
         board = player1.addPlayer.player1Board;
         return player1;
-      } else {
+      } else {        
         board = player2.addPlayer.player2Board;
         return player2;
       };
-    })();   
-    let allShips =  player.placeShips.coordinates;   
-    for (let i = 0; Object.keys(allShips).length > i; i++) {
-      let ship = allShips[Object.keys(allShips)[i]];
-      let position = ship.position;
-      let coor = ship.coo;
-      let length = coor.length;
-      board.shipPlace(length, coor, position);      
-    };
+    })();
+    
+      let allShips; 
+      if(!coo) {
+        allShips = player.placeShips.coordinates;         
+      } else if(coo.length === 10 || coo.length === undefined){
+        allShips = coo;
+      };
+      if (!coo ||  coo.length === undefined) {        
+        for (let i = 0; Object.keys(allShips).length > i; i++) {
+          let ship = allShips[Object.keys(allShips)[i]];
+          let position = ship.position;
+          let coor = ship.coo;           
+          let length = coor.length;
+          board.shipPlace(length, coor, position);      
+        };
+      } else if (coo.length === 10) {        
+        for(let i = 0; allShips.length > i; i++){         
+          board.shipPlace(allShips[i].length, allShips[i]);           
+        };      
+      };   
     removeManualShadows(board);    
   };
   const removeManualShadows = (board) => {
@@ -1356,16 +1387,22 @@ const gameFlow = (() => {
     let text = (() => {
       if (AI === true && pl === "player1") {
         return "AI<br>WINS!!!";
-      } else if (AI === true && pl === "AI") {
+      } else if (AI === true && (pl === "AI" || pl === "player2")) {
         return "YOU<br>WIN!!!";
       } else if (AI === false && pl === "player1"){
         return "PLAYER2<br>WINS!!!";
       } else if (AI === false && pl === "player2"){
         return "PLAYER1<br>WINS!!!";
-      }
-    })();
+      };
+     
+    })();   
+    player2.mode = "peace";
+    player1.mode = "peace";
     place.style.fontFamily = "Silkscreen, Alkalami, serif";
-    place.innerHTML = text;    
+    place.innerHTML = text;  
+    play1Coo = [];
+    play2Coo = []; 
+    WhichPlayer.style.display = "none";    
   };
   const videoOpacityAni = (page, page2, removeTemp, ifSlide) => {
     let hideTemp;
@@ -1401,6 +1438,14 @@ const gameFlow = (() => {
       };     
     }, "1000");
   };
+
+  // get coordinates when pvp mode
+  const getCoo = (player) => {
+    let all = player1.addPlayer.player1Board.ships;    
+    for(let i = 0; all.length > i; i++) {
+      player.push(all[i].shipCoor);
+    };        
+  };
   // const pageMoveAni = (page, page2) => {
   //   const pageOldT = [{transform: 'translateY(0)'}, 
   //   {transform: 'translateY(-100%)'}];
@@ -1424,6 +1469,19 @@ const gameFlow = (() => {
     turn = "player1";    
     videoOpacityAni("front-page");   
   });
+  let WhichPlayer = document.getElementById("player-name-wrapper"); 
+  PVP.addEventListener("click", () => {
+    if(!player1){
+      player1Choice();
+    };    
+    turn = "player1";    
+    videoOpacityAni("front-page");       
+    WhichPlayer.style.display = "flex";
+    WhichPlayer.innerHTML = `${turn} Setup`; 
+    startGame.style.display = "none";
+    nextPlayer.style.display = "block";
+    
+  });
   backMenu.addEventListener("click", () => {
     frontPage.style.display = ""; 
     resetBoard();
@@ -1432,6 +1490,8 @@ const gameFlow = (() => {
     manualPlacement = true;
     startGame.disabled = true;
     startGame.style.opacity = "0.2";
+    nextPlayer.disabled = true;
+    nextPlayer.style.opacity = "0.2";
   });
   randomPlace.addEventListener("click", () => { 
     resetBoard();    
@@ -1439,7 +1499,9 @@ const gameFlow = (() => {
     randomShips();  
     manualPlacement= false; 
     startGame.disabled = false;
-    startGame.style.opacity = "1";  
+    startGame.style.opacity = "1";
+    nextPlayer.disabled = false;
+    nextPlayer.style.opacity = "1";   
   });  
   clearBoard.addEventListener("click", () => {    
     resetBoard(); 
@@ -1448,9 +1510,11 @@ const gameFlow = (() => {
     manualPlacement = true;
     startGame.disabled = true;
     startGame.style.opacity = "0.2";
+    nextPlayer.disabled = true;
+    nextPlayer.style.opacity = "0.2"; 
   });
-  startGame.addEventListener("click", () => {     
-    turn = "player2";
+  startGame.addEventListener("click", () => {    
+    turn = "player2";    
     // document.getElementById("ships-and-navigation").style.display = "none";
     // document.getElementById("board-w-coor2").style.display = "grid";
     if(AI === true) {      
@@ -1458,8 +1522,35 @@ const gameFlow = (() => {
         player2ChoiceAI();
         allCoo = player1.addPlayer.player1Board.allCoo;  
       }; 
-      randomShips("AI");       
+      randomShips("AI"); 
     };    
+    
+    if(AI === false) {      
+      if(!player2) {
+        player2Choice();
+        allCoo = player1.addPlayer.player1Board.allCoo;  
+      };      
+      if (manualPlacement === true) {
+        //manual placement
+        play2Coo = player1.placeShips.coordinates;
+       
+      } else {
+        //random choice
+        getCoo(play2Coo);            
+      };
+      resetBoard("GO");      
+      addManualShips("player1", play1Coo);
+      addManualShips("player2", play2Coo);
+
+      //background white for all the squares
+      play1Coo.forEach(c => {
+          for (let i = 0; c.length > i; i++) {
+            document.getElementById(c[i]).style.backgroundColor = "white";
+          }
+      }) 
+      document.getElementById("place-the-ships").style.height = "100vh";
+      document.getElementById("place-the-ships").style.alignContent = "center"
+    };  
     player2.mode = "war";
     player1.mode = "peace";    
     turn = "player1";  
@@ -1469,13 +1560,43 @@ const gameFlow = (() => {
         addManualShips("player1");        
       };       
     }; 
-    // document.querySelector("#body-battle-ship").style.height = "100%";  
-    videoOpacityAni("ships-and-navigation", "board-w-coor2","", true);
-    // document.getElementById("board-w-coor2").style.position = "absolute";   
-    document.getElementById("board-w-coor").animate([{opacity: "1"}, {opacity: "0.5"}], 1000);
-    document.getElementById("board-w-coor").style.opacity = "0.5";
+    if (AI === true) {
+      videoOpacityAni("ships-and-navigation", "board-w-coor2","", true);
+      document.getElementById("board-w-coor").animate([{opacity: "1"}, {opacity: "0.5"}], 1000);
+      document.getElementById("board-w-coor").style.opacity = "0.5";
+    };
+    if(AI === false) {
+      document.getElementById("ships-and-navigation").style.display = "none";
+      document.getElementById("board-w-coor").style.display = "none";
+      document.getElementById("board-w-coor2").style.display = "grid";
+      document.getElementById("board-w-coor2").style.position = "static";
+      WhichPlayer.innerHTML = `Player1 SHOOT!`;
+    };    
+  }); 
+  let play1Coo = [];
+  let play2Coo = [];  
+
+  nextPlayer.addEventListener("click", () => {
+    turn = "player1";    
+    if (manualPlacement === true) {
+      //manual placement
+      play1Coo = JSON.parse(JSON.stringify(player1.placeShips.coordinates));
+    } else {
+      //random choice
+    getCoo(play1Coo);    
+    };
+    allChoices();
+    resetBoard();
+    resetPlayer();    
+    WhichPlayer.innerHTML = `Player2 Setup`; 
+    startGame.style.display = "block";
+    startGame.disabled = true;
+    startGame.style.opacity = "0.2";
+    nextPlayer.style.display = "none";
+    manualPlacement = true;   
   });
   backMainMenu.addEventListener("click", () => {
+    AI = false;
     frontPage.style.display = ""; 
     resetBoard("GO");
     resetPlayer("GO"); 
@@ -1483,10 +1604,13 @@ const gameFlow = (() => {
     manualPlacement = true;
     startGame.disabled = true;
     startGame.style.opacity = "0.2";
+    nextPlayer.disabled = true;
+    nextPlayer.style.opacity = "0.2"; 
     // document.getElementById("victory-msg").style.display = "none";
     document.getElementById("ships-and-navigation").style.display = "flex";
     document.getElementById("board-w-coor2").style.display = "none";
     document.getElementById("board-w-coor").style.opacity = "1";
+    document.getElementById("board-w-coor").style.display = "grid";    
     document.getElementById("board-w-coor2").style.position = "absolute";
     allCoo = (() => {      
       let result = [];
@@ -1502,7 +1626,8 @@ const gameFlow = (() => {
     videoOpacityAni("victory-msg", "front-page", "user-ship-placement");
     // document.getElementById("user-ship-placement").style.display = "";
     frontPage.style.display = "";  
-    resetAI();  
+    resetAI(); 
+    document.getElementById("place-the-ships").style.height = "100%";
   });
 
   //take turns to shoot  
@@ -1512,7 +1637,12 @@ const gameFlow = (() => {
         turn = "player1";
         player2.mode = "peace";
         player1.mode = "war";
-        player2.addPlayer.player2Board.hit = "";        
+        player2.addPlayer.player2Board.hit = "";  
+        if(AI === false) {
+          document.getElementById("board-w-coor").style.display = "grid";
+          document.getElementById("board-w-coor2").style.display = "none";
+          WhichPlayer.innerHTML = `Player2 SHOOT!`; 
+        };      
         if(AI === true) {
           setTimeout(() => {
             moveAI(false);  
@@ -1523,7 +1653,12 @@ const gameFlow = (() => {
         player1.mode = "peace";
         player2.mode = "war";
         player1.addPlayer.player1Board.hit = "";        
-        shots = player1.addPlayer.player1Board.shots;        
+        shots = player1.addPlayer.player1Board.shots;
+        if(AI === false) {
+          document.getElementById("board-w-coor").style.display = "none";
+          document.getElementById("board-w-coor2").style.display = "grid";
+          WhichPlayer.innerHTML = `Player1 SHOOT!`; 
+        };             
       } else if (player2.addPlayer.player2Board.hit === true) {
         turn = "player1";
         player2.mode = "war";
