@@ -139,6 +139,9 @@ body {
     color: white;
     background-color: navy;
 }
+.pvc-mode {
+    display: none;
+}
 .ship-placement-button {
     font-family: 'Silkscreen', serif;
     border: black 3px dotted;

@@ -1,6 +1,7 @@
 // const parse = require("./style.css");
 // import sheet from './style.css' assert { type: 'css' };
 
+
 // construct new ship
 const shipFactory = (coor, blSq, player) => {   
   let shipCoor = [];
@@ -1290,6 +1291,8 @@ const gameFlow = (() => {
   const nextPlayer = document.getElementById("next-player");
   nextPlayer.disabled = true;
   const backMainMenu = document.getElementById("returnMenuB");
+  const easyMode = document.getElementById("PVC-easy");
+  const hardMode = document.getElementById("PVC-hard");
 
   // methods for buttons
   const zeroChoices = () => {    
@@ -1461,13 +1464,40 @@ const gameFlow = (() => {
   //   }, "1000");
   // };
   //click events
-  PVC.addEventListener("click", () => {    
+  PVC.addEventListener("click", () => {
+    let hide = document.querySelectorAll(".game-mode");
+    hide.forEach(h => {
+      h.style.display = "none";
+    });   
+    let unHide = document.querySelectorAll(".pvc-mode");
+    unHide.forEach(u => {
+      u.style.display = "block";
+    });   
+    // if(!player1){
+    //   player1Choice();
+    // };       
+    // AI = true; 
+    // turn = "player1";    
+    // videoOpacityAni("front-page");   
+  });
+  easyMode.addEventListener("click", () => {
     if(!player1){
       player1Choice();
     };       
     AI = true; 
     turn = "player1";    
-    videoOpacityAni("front-page");   
+    videoOpacityAni("front-page");  
+    AIMode = "easy";
+  });
+
+  hardMode.addEventListener("click", () => {
+    if(!player1){
+      player1Choice();
+    };       
+    AI = true; 
+    turn = "player1";    
+    videoOpacityAni("front-page");  
+    AIMode = "hard";
   });
   let WhichPlayer = document.getElementById("player-name-wrapper"); 
   PVP.addEventListener("click", () => {
@@ -1479,8 +1509,7 @@ const gameFlow = (() => {
     WhichPlayer.style.display = "flex";
     WhichPlayer.innerHTML = `${turn} Setup`; 
     startGame.style.display = "none";
-    nextPlayer.style.display = "block";
-    
+    nextPlayer.style.display = "block";    
   });
   backMenu.addEventListener("click", () => {
     frontPage.style.display = ""; 
@@ -1492,6 +1521,14 @@ const gameFlow = (() => {
     startGame.style.opacity = "0.2";
     nextPlayer.disabled = true;
     nextPlayer.style.opacity = "0.2";
+    let hide = document.querySelectorAll(".game-mode");
+    hide.forEach(h => {
+      h.style.display = "block";
+    });   
+    let unHide = document.querySelectorAll(".pvc-mode");
+    unHide.forEach(u => {
+      u.style.display = "none";
+    });        
   });
   randomPlace.addEventListener("click", () => { 
     resetBoard();    
@@ -1628,6 +1665,14 @@ const gameFlow = (() => {
     frontPage.style.display = "";  
     resetAI(); 
     document.getElementById("place-the-ships").style.height = "100%";
+    let hide = document.querySelectorAll(".game-mode");
+    hide.forEach(h => {
+      h.style.display = "block";
+    });   
+    let unHide = document.querySelectorAll(".pvc-mode");
+    unHide.forEach(u => {
+      u.style.display = "none";
+    });    
   });
 
   //take turns to shoot  
