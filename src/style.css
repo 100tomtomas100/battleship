@@ -9,8 +9,7 @@
 :root {
     --box-size: calc(230px + 10vw);
 }
-body {  
-    height: 100vh;   
+body {     
     background-color: white;
     display: flex;
     justify-content: center;
@@ -242,6 +241,9 @@ body {
     user-select: none;
 }
 @media only screen and (min-width: 700px) {  
+    body{
+        height: 100vh;
+    }
     #who-won {
         font-size: 8vw;
     }
@@ -281,6 +283,5 @@ body {
     }
     .game-mode {
         width: 30%
-    }
-    
+    }    
 }

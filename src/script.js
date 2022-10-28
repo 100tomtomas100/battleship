@@ -1,7 +1,6 @@
 // const parse = require("./style.css");
 // import sheet from './style.css' assert { type: 'css' };
 
-
 // construct new ship
 const shipFactory = (coor, blSq, player) => {   
   let shipCoor = [];
@@ -25,14 +24,10 @@ const shipFactory = (coor, blSq, player) => {
     let colorShip;
     if(player === "AI"){
       colorShip = document.getElementById(`p2${coor[i]}`);
-    } else if(player === "player2") {
-      // colorShip = document.getElementById(`p2${coor[i]}`);
-      // colorShip.style.backgroundColor = "green";
     } else {      
       colorShip = document.getElementById(coor[i]);
       colorShip.style.backgroundColor = "green";                   
     };   
-    // colorShip.style.backgroundColor = "green";
   };
   return {shipCoor, hit, sunk, sunkBl} 
 };
@@ -46,6 +41,7 @@ const gameBoard = (player) => {
   let coorLet;
   let coorNum;
   let shipSunkCount = 0;
+
   const screenBoard = () => {
     if(player === "player1"){     
       container = document.getElementById("place-board");
@@ -56,7 +52,7 @@ const gameBoard = (player) => {
       coorLet = document.getElementById("coor-let2");
       coorNum = document.getElementById("coor-num2");
     };
-    
+
     container.style.gridTemplateColumns = "repeat(10, auto)";
     for (let i = 1; i <= 10*10; i++) {      
       let square = container.appendChild(document.createElement("div"));      
@@ -72,6 +68,7 @@ const gameBoard = (player) => {
 
     coorLet.style.gridTemplateColumns = "repeat(10, 1fr)";   
     coorNum.style.gridTemplateRows = "repeat(10, 1fr)";
+
     for(let i = 1; i <= 10; i++) {
       let num = coorNum.appendChild(document.createElement("div"));
       num.style.fontFamily = "Silkscreen, Alkalami, serif";
@@ -93,8 +90,7 @@ const gameBoard = (player) => {
   let missedAttack = [];
   let shots = [];
   let hit;
-  let sunkSome = false;
-   
+  let sunkSome = false;   
  
   //receive enemy attack and check if the ship was hit or it was a missed attack  
   const receiveAttack = (shot, s = ships) => { 
@@ -105,6 +101,7 @@ const gameBoard = (player) => {
       let boardHeight = getComputedStyle(document.querySelector(':root')).getPropertyValue('--box-size');            
       let sqSide = (Number(boardHeight.slice(0, boardHeight.length-2)) / 10) + "px";       
       let time = 0;
+      
       coo.forEach(c => {        
         setTimeout(() => {
         let squareV = document.getElementById(c);
@@ -118,66 +115,69 @@ const gameBoard = (player) => {
         squareV.style.backgroundColor  = "green";
         }, time); 
         time +=200;     
-      });      
+      });
+
     };
+
     //set sunk some ships to default
     if (player === "player1") {
       player1.addPlayer.player1Board.sunkSome = false;
     } else {
       player2.addPlayer.player2Board.sunkSome = false;
-    };      
+    }; 
+
     let checkShips = (ship) => { 
       if (ship.sunk === false) {      
-      for (let j = 0; ship.shipCoor.length > j; j++) {              
-        if (ship.shipCoor[j] == shot){         
-          ship.hit.push(shot);         
-          shipHit = true;
-        }; 
-        if (ship.hit.length === ship.shipCoor.length) {
-          ship.sunk = true;
-          shotFire(ship.shipCoor); 
-          if (player === "player1") {
-            player1.addPlayer.player1Board.sunkSome = ship.shipCoor.length;
-          } else {
-            player2.addPlayer.player2Board.sunkSome = ship.shipCoor.length;
-          };      
+        for (let j = 0; ship.shipCoor.length > j; j++) { 
 
-          // background color of sunken ship
-          // for(let j = 0; ship.shipCoor.length > j; j++) {
-          //   setTimeout(() => {
-          //   document.getElementById(ship.shipCoor[j]).style.backgroundColor = "green";
-          //   }, 1000);
-          // };
+          if (ship.shipCoor[j] == shot){         
+            ship.hit.push(shot);         
+            shipHit = true;
+          }; 
 
-          // mark squares around sunken ship
-          for(let i = 0; ship.sunkBl.length > i; i++) {            
-            let sq = document.getElementById(ship.sunkBl[i]);            
-            if (!sq.hasChildNodes()) {
-              let text = document.createElement("p");
-              sq.appendChild(text);
-              text.style.position = "absolute";                    
-              text.innerHTML = "&#9679;";
-            };            
-          };
-        }; 
-      };
-      if (ship.hit.length === ship.shipCoor.length) {        
-        gameFlow.removeAICoo(ship.sunkBl);
+          if (ship.hit.length === ship.shipCoor.length) {
 
-        //victory pop up 
-        shipSunkCount += 1;
+            ship.sunk = true;
+            shotFire(ship.shipCoor);
 
-        if (shipSunkCount === 10) {          
-          document.getElementById("victory-msg").style.display = "block";                   
-          gameFlow.gameOver(player);
-        };        
-      };
-    }  
+            if (player === "player1") {
+              player1.addPlayer.player1Board.sunkSome = ship.shipCoor.length;
+            } else {
+              player2.addPlayer.player2Board.sunkSome = ship.shipCoor.length;
+            };     
+
+            // mark squares around sunken ship
+            for(let i = 0; ship.sunkBl.length > i; i++) {
+              let sq = document.getElementById(ship.sunkBl[i]);
+                          
+              if (!sq.hasChildNodes()) {
+                let text = document.createElement("p");
+                sq.appendChild(text);
+                text.style.position = "absolute";                    
+                text.innerHTML = "&#9679;";
+              };            
+            };
+          }; 
+        };
+
+        if (ship.hit.length === ship.shipCoor.length) {        
+          gameFlow.removeAICoo(ship.sunkBl);
+
+          //victory pop up 
+          shipSunkCount += 1;
+
+          if (shipSunkCount === 10) {          
+            document.getElementById("victory-msg").style.display = "block";                   
+            gameFlow.gameOver(player);
+          };        
+        };
+      }  
     };
 
     for (let i = 0; ships.length > i; i++) {
       checkShips(ships[i]);
-    };   
+    }; 
+
     if(shipHit === false) {    
       missedAttack.push(shot);
       if (player === "player1") {
@@ -194,6 +194,7 @@ const gameBoard = (player) => {
       };      
     };     
   };
+
   // all coordinates as well available coordinates
   let allCoo = (() => {
       let result = [];
@@ -388,7 +389,9 @@ const gameBoard = (player) => {
           };
         };
       };
+
       let blockAvail = block.filter(nr => nr > 0 && nr < 101);
+
       if(test) {
         blockAvail.forEach(bl => { 
         let text = document.createElement("p");       
@@ -401,9 +404,11 @@ const gameBoard = (player) => {
         };               
         });
       }; 
+
       if (test != "test") {
         removeCoo(blockAvail);
-      };     
+      };
+
       return blockAvail;
     })();
 
@@ -413,14 +418,17 @@ const gameBoard = (player) => {
       createShip(coo, blockSq, player);          
       })();    
     };
+
     if(test != "test") {
       removeCoo(coo); 
-    };     
+    };
+
     if (name === "player1") {
       player1.placeShips.coordinates[shipId].blocks = blockSq; 
     } else  if(name === "player2" || name == "AI") {
       player2.placeShips.coordinates[shipId].blocks = blockSq;
-    };         
+    };
+
   };   
   
   const resetBoard = () => { 
@@ -444,8 +452,7 @@ const gameBoard = (player) => {
       coo.style.backgroundColor = "";  
       coo.style.position = "";
       coo.style.overflow = "";     
-    }); 
-    
+    });    
   };  
   return {resetBoard, allCoo, createShip, receiveAttack, ships, missedAttack, screenBoard, shipPlace, hit, shots, sunkSome};
 };
@@ -501,8 +508,8 @@ const player = (name) => {
 
 // shoot the enemy  
     let mode = "peace";   
-    const shoot = () => {         
-        // let square = document.querySelectorAll(".square");         
+    const shoot = () => {  
+
         let squareP1 = (() => {
           result = [];
           for (let i = 1; i < 101; i++) {
@@ -510,6 +517,7 @@ const player = (name) => {
           };
           return result
         })();
+        
         let squareP2 = (() => {
           result = [];
           for (let i = 1; i < 101; i++) {
@@ -520,7 +528,7 @@ const player = (name) => {
         
         let name;
         let square;
-        // let pow;
+        
         if (title === "player1") {
           name = player1Board;
           square = squareP1;          
@@ -528,6 +536,7 @@ const player = (name) => {
           name = player2Board;
           square = squareP2;          
         };
+
         let markShot = (sq) => {   
           const shotAni = (where, hit) => {            
             const shotCh = [{opacity: "0"}, {opacity: "1"}];
@@ -594,6 +603,7 @@ const player = (name) => {
       let shipContainers = [];
       let squaree;
       let numtext;
+
       for (let i = 1; i <= 4; i++) {  
         let number = [i];  
         squaree = container.appendChild(document.createElement("div"));
@@ -675,8 +685,7 @@ const player = (name) => {
           container3: 0,
           container4: 0
         };
-      };
-      
+      };      
 
       // ships first elements second number
       let nr1 = () => {
@@ -690,8 +699,7 @@ const player = (name) => {
         let lastNr = (((sqColor[0][sqColor[0].length-1]).toString()).split(""))
         [(((sqColor[0][sqColor[0].length-1]).toString()).split("")).length -1];
         return lastNr;
-      };
-     
+      };     
 
       // ships drag events    
       const startDrag = (container) => {
@@ -706,23 +714,9 @@ const player = (name) => {
         container.draggable ="true";     
         container.addEventListener("dragstart", () => { 
           startDrag(container);              
-        });
-        container.addEventListener("touchstart", (e) => {
-          e.preventDefault();
-         
-          
-          startDrag(container);
-        });
-        container.addEventListener("touchmove", (e) => {
-          
-          container.style.position ="absolute"
-          let touchLocation = e.targetTouches[0];
-          let containerX = container.style.left = touchLocation.pageX + 'px';
-          let containerY = container.style.top = touchLocation.pageY + 'px';         
-        });
+        });     
 
-        container.addEventListener("dragend", () => {
-          
+        container.addEventListener("dragend", () => {          
           dragTo.forEach(sq => {
             sq.className = "square";
           }); 
@@ -747,14 +741,13 @@ const player = (name) => {
           });         
         };
       };
-       
-
 
       const updateList = ((c) => {              
           c.addEventListener("dragstart", () => {            
             containerNr = c.className;  
             containerId = c.id;  
             position = coordinates[c.id].position;
+
             // on the move remove coordinates of the ship and blocks from blocked coordinates
             let ship = coordinates[containerId].coo;
             let blocks = coordinates[containerId].blocks;
@@ -776,6 +769,7 @@ const player = (name) => {
             });
               marksReDo()                       
           });
+
           c.addEventListener("dragend", () => {
             dragTo.forEach(sq => {
               sq.className = "square";
@@ -795,6 +789,7 @@ const player = (name) => {
             outOfSq = true;
             
           });
+
           c.addEventListener("click", () => {            
             let goodToTurn = true;
             containerId = c.id;
@@ -880,8 +875,6 @@ const player = (name) => {
                   usedCoo.push(o);
                 });
               };              
-            
-              
             } else if (c.style.display === "grid") { 
               containerNr = c.id;              
               let goodToTurn = true;             
@@ -905,6 +898,7 @@ const player = (name) => {
                     };
                   };               
                 });
+
                 // remove block coordinates from used
                 blocks.forEach(b => {
                   for (let i = 0; usedCoo.length > i; i++) {                 
@@ -950,7 +944,8 @@ const player = (name) => {
                   usedCoo.push(n)
                 });
                 marksReDo();                              
-              };      
+              }; 
+
               if(nCoo.length === cooL &&
                  ((nCoo[0]-1).toString())[1] <= 10 - ships[containerNr[9]-1]
                  && goodToTurn === true) {                             
@@ -1172,8 +1167,7 @@ const player = (name) => {
                 nextBtn.disabled = false;
                 nextBtn.style.opacity = "1";
               };              
-            })();
-            
+            })();            
             
             if (goodToCopy === true) {              
               updateList(copies[copies.length - 1]);              
@@ -1183,8 +1177,7 @@ const player = (name) => {
             }
             ship.style.position = "absolute";
             ship.style.zIndex = "9";   
-            let shipId = ship.id;
-            
+            let shipId = ship.id;            
 
             if (position === "horizontal") {
               if(containerNr === "container1") {               
@@ -1207,9 +1200,11 @@ const player = (name) => {
             if (goodToCopy === true) {
               coordinates[shipId] = {};  
               coordinates[shipId].position = "horizontal";              
-            };            
+            }; 
+
             coordinates[shipId].coo = containerCoo;
             let name;
+
             if (title === "player1") {
               name = player1Board;
             } else {
@@ -1232,21 +1227,17 @@ const player = (name) => {
           dropDrag(sq);        
         });       
       });  
-      //end drag event 
-      
-      
+      //end drag event
 
       return {coordinates, resetPlayer}
-     }   
-    })();
-  
+     };   
+    })();  
   
   return {title, enemy, randomShipPlacement, addPlayer, placeShips, mode, shoot}  
 };
 
 let player1;
 let player2;
-
 
 const gameFlow = (() => {
   let allCoo;  
@@ -1255,13 +1246,11 @@ const gameFlow = (() => {
   let turn = "player1";
   let AI = false;
   let manualPlacement = true;
-  let nextPlayerTxt = document.getElementById("next-pl-msg");
-  // let AIMode = "hard";  
-  // let shotsMadeAI = [];
-  // let AIshipsSunk = [];
+  let nextPlayerTxt = document.getElementById("next-pl-msg");  
 
   const removeAICoo = (coo) => {
-    let length = allCoo.length;     
+    let length = allCoo.length; 
+
       coo.forEach(c => {        
         for(let i = 0; length > i; i++){                         
           if(allCoo[i] == c) {           
@@ -1305,6 +1294,7 @@ const gameFlow = (() => {
       noDrag.draggable = false;
     };
   };
+
   const allChoices = () => {
     for(let i = 1; i <= 4; i++){    
       let change = document.getElementById(`text${i}`);
@@ -1313,6 +1303,7 @@ const gameFlow = (() => {
       noDrag.draggable = true;
     };
   };
+
   const resetBoard = (GO) => {
     if (GO) {
       player1.addPlayer.player1Board.resetBoard(); 
@@ -1323,6 +1314,7 @@ const gameFlow = (() => {
       player1.addPlayer.player1Board.resetBoard();      
     };  
   };
+
   const randomShips = () => {
     if (turn === "player1") {     
       player1.randomShipPlacement();
@@ -1330,11 +1322,9 @@ const gameFlow = (() => {
       player2.randomShipPlacement();
     };    
   };
+
   const resetPlayer = (GO) => {
-    if (GO) {      
-      // if(AI === false){
-      //   player2.placeShips.resetPlayer();  
-      // };           
+    if (GO) {             
       player1.placeShips.resetPlayer();       
     } else  if (turn === "player2" && !GO && AI === false) {      
       player2.placeShips.resetPlayer();
@@ -1342,9 +1332,10 @@ const gameFlow = (() => {
       player1.placeShips.resetPlayer();      
     };    
   };  
+
   const addManualShips = (who, coo) => {
     let board;
-    let player = (()=> {          
+    let player = (()=> {                
       if (who === "player1") {
         board = player1.addPlayer.player1Board;
         return player1;
@@ -1353,13 +1344,15 @@ const gameFlow = (() => {
         return player2;
       };
     })();
-    
-      let allShips; 
+
+      let allShips;
+
       if(!coo) {
         allShips = player.placeShips.coordinates;         
       } else if(coo.length === 10 || coo.length === undefined){
         allShips = coo;
       };
+
       if (!coo ||  coo.length === undefined) {        
         for (let i = 0; Object.keys(allShips).length > i; i++) {
           let ship = allShips[Object.keys(allShips)[i]];
@@ -1372,9 +1365,11 @@ const gameFlow = (() => {
         for(let i = 0; allShips.length > i; i++){         
           board.shipPlace(allShips[i].length, allShips[i]);           
         };      
-      };   
+      }; 
+
     removeManualShadows(board);    
   };
+
   const removeManualShadows = (board) => {
     let coo = allCoo;     
     coo.forEach(c => {
@@ -1387,6 +1382,7 @@ const gameFlow = (() => {
       };      
     });
   };
+
   const gameOver = (pl) => {
     let place = document.getElementById("who-won");
     let text = (() => {
@@ -1408,32 +1404,31 @@ const gameFlow = (() => {
     play2Coo = []; 
     WhichPlayer.style.display = "none";    
   };
+
   const videoOpacityAni = (page, page2, removeTemp, ifSlide) => {
     let hideTemp;
+
     if(removeTemp) {
       hideTemp = document.getElementById(removeTemp);
       hideTemp.style.display = "none";
-    };    
+    };
+
     const disappear = [{opacity: "1"}, {opacity: "0"}];
     const appear = [{opacity: "0"}, {opacity: "1"}];
     const pagedisapp = document.getElementById(page);    
     const pageSplitTiming = {duration: 1000, iterations: 1,};
     let pageapp;
+
     if(page2){     
       pageapp = document.getElementById(page2);
       pageapp.style.display = "grid"; 
-      pageapp.animate(appear, pageSplitTiming);
-      
-      // if(ifSlide) {        
-        // const pageNewT = [{transform: 'translateY(100%)'}, 
-        // {transform: 'translateY(0)'}];
-        // pageapp.animate(appear, pageSplitTiming);
-        // pageapp.style.position = "relative";
-      // }     
-    };  
+      pageapp.animate(appear, pageSplitTiming);      
+    }; 
+
     if (page != "") {
       pagedisapp.animate(disappear, pageSplitTiming);
-    };        
+    };
+
     setTimeout(() => {
       if(ifSlide) {
         pageapp.style.position = "relative";
@@ -1445,6 +1440,7 @@ const gameFlow = (() => {
         hideTemp.style.display = "";
       };     
     }, "990");
+
   };
 
   // get coordinates when pvp mode
@@ -1454,38 +1450,23 @@ const gameFlow = (() => {
       player.push(all[i].shipCoor);
     };        
   };
-  // const pageMoveAni = (page, page2) => {
-  //   const pageOldT = [{transform: 'translateY(0)'}, 
-  //   {transform: 'translateY(-100%)'}];
-  //   const pageNewT = [{transform: 'translateY(100%)'}, 
-  //   {transform: 'translateY(0)'}];
-  //   const pageSplitTiming = {duration: 1000, iterations: 1,};
-  //   let pageOld = document.getElementById(page);
-  //   let pageNew = document.getElementById(page2);    
-  //   pageOld.animate(pageOldT, pageSplitTiming);
-  //   pageNew.animate(pageNewT, pageSplitTiming);
-  //   setTimeout(() => {
-  //     pageOld.style.display = "none";        
-  //   }, "1000");
-  // };
+ 
   //click events
   PVC.addEventListener("click", () => {
     let hide = document.querySelectorAll(".game-mode");
+
     hide.forEach(h => {
       h.style.display = "none";
-    });   
+    }); 
+
     let unHide = document.querySelectorAll(".pvc-mode");
     unHide.forEach(u => {
       u.style.display = "block";
-    });   
-    // if(!player1){
-    //   player1Choice();
-    // };       
-    // AI = true; 
-    // turn = "player1";    
-    // videoOpacityAni("front-page");   
+    });
+      
     placeTheShips.style.visibility = "visible";
   });
+  
   easyMode.addEventListener("click", () => {
     if(!player1){
       player1Choice();
@@ -1505,7 +1486,9 @@ const gameFlow = (() => {
     videoOpacityAni("front-page");  
     AIMode = "hard";
   });
-  let WhichPlayer = document.getElementById("player-name-wrapper"); 
+
+  let WhichPlayer = document.getElementById("player-name-wrapper");
+
   PVP.addEventListener("click", () => {
     if(!player1){
       player1Choice();
@@ -1518,6 +1501,7 @@ const gameFlow = (() => {
     nextPlayer.style.display = "block"; 
     placeTheShips.style.visibility = "visible";
   });
+
   backMenu.addEventListener("click", () => {
     frontPage.style.display = ""; 
     resetBoard();
@@ -1538,6 +1522,7 @@ const gameFlow = (() => {
     }); 
     WhichPlayer.style.display = "none";   
   });
+
   randomPlace.addEventListener("click", () => { 
     resetBoard();    
     zeroChoices();
@@ -1547,7 +1532,8 @@ const gameFlow = (() => {
     startGame.style.opacity = "1";
     nextPlayer.disabled = false;
     nextPlayer.style.opacity = "1";   
-  });  
+  });
+   
   clearBoard.addEventListener("click", () => {    
     resetBoard(); 
     allChoices();
@@ -1558,10 +1544,9 @@ const gameFlow = (() => {
     nextPlayer.disabled = true;
     nextPlayer.style.opacity = "0.2"; 
   });
+
   startGame.addEventListener("click", () => {    
-    turn = "player2";    
-    // document.getElementById("ships-and-navigation").style.display = "none";
-    // document.getElementById("board-w-coor2").style.display = "grid";
+    turn = "player2";   
     if(AI === true) {      
       if(!player2){
         player2ChoiceAI();
@@ -1569,7 +1554,6 @@ const gameFlow = (() => {
       }; 
       randomShips("AI"); 
     };    
-    
     if(AI === false) {      
       if(!player2) {
         player2Choice();
@@ -1577,8 +1561,7 @@ const gameFlow = (() => {
       };      
       if (manualPlacement === true) {
         //manual placement
-        play2Coo = player1.placeShips.coordinates;
-       
+        play2Coo = player1.placeShips.coordinates;       
       } else {
         //random choice
         getCoo(play2Coo);            
@@ -1588,36 +1571,32 @@ const gameFlow = (() => {
       addManualShips("player2", play2Coo);
 
       //background white for all the squares      
-      
        let toWhite = document.querySelectorAll(".square");
        toWhite.forEach(t => {
         t.style.backgroundColor = "white";
-       });
-      
-      // if(manualPlacement === false) {
-      //   play1Coo.forEach(c => {
-      //     for (let i = 0; c.length > i; i++) {
-      //       document.getElementById(c[i]).style.backgroundColor = "white";
-      //     };
-      //   }); 
-      // };      
+       });     
+   
       document.getElementById("place-the-ships").style.height = "100vh";
       document.getElementById("place-the-ships").style.alignContent = "center"
-    };  
+    }; 
+
     player2.mode = "war";
     player1.mode = "peace";    
     turn = "player1";  
-    gameStart = true;     
+    gameStart = true;
+
     if (manualPlacement === true) {
       if (AI === true) {
         addManualShips("player1");        
       };       
-    }; 
+    };
+
     if (AI === true) {
       videoOpacityAni("ships-and-navigation", "board-w-coor2","", true);
       document.getElementById("board-w-coor").animate([{opacity: "1"}, {opacity: "0.5"}], 1000);
       document.getElementById("board-w-coor").style.opacity = "0.5";
     };
+
     if(AI === false) {
       document.getElementById("ships-and-navigation").style.display = "none";
       document.getElementById("board-w-coor").style.display = "none";
@@ -1625,8 +1604,8 @@ const gameFlow = (() => {
       document.getElementById("board-w-coor2").style.position = "static";
       WhichPlayer.innerHTML = `Player1 SHOOT!`;
     };    
-    // document.getElementById("body-battle-ship").style.backgroundColor = "navy";
   }); 
+
   let play1Coo = [];
   let play2Coo = [];  
 
@@ -1649,6 +1628,7 @@ const gameFlow = (() => {
     nextPlayer.style.display = "none";
     manualPlacement = true;   
   });
+
   backMainMenu.addEventListener("click", () => {
     AI = false;
     frontPage.style.display = ""; 
@@ -1659,37 +1639,38 @@ const gameFlow = (() => {
     startGame.disabled = true;
     startGame.style.opacity = "0.2";
     nextPlayer.disabled = true;
-    nextPlayer.style.opacity = "0.2"; 
-    // document.getElementById("victory-msg").style.display = "none";
+    nextPlayer.style.opacity = "0.2";   
     document.getElementById("ships-and-navigation").style.display = "flex";
     document.getElementById("board-w-coor2").style.display = "none";
     document.getElementById("board-w-coor").style.opacity = "1";
     document.getElementById("board-w-coor").style.display = "grid";    
     document.getElementById("board-w-coor2").style.position = "absolute";
+
     allCoo = (() => {      
       let result = [];
       for(let i = 1; 101 > i; i++) {
         result.push(i);      
       };      
-      gameFlow.allCoo = result;
-      // document.querySelector("#body-battle-ship").style.height = "100%";      
+      gameFlow.allCoo = result;      
       return result;
     })(); 
-    // pageMoveAni("victory-msg", "front-page");  
-    // document.getElementById("user-ship-placement").style.display = "none";
-    videoOpacityAni("victory-msg", "front-page", "user-ship-placement");
-    // document.getElementById("user-ship-placement").style.display = "";
+     
+    videoOpacityAni("victory-msg", "front-page", "user-ship-placement");    
     frontPage.style.display = "";  
     resetAI(); 
     document.getElementById("place-the-ships").style.height = "100%";
     let hide = document.querySelectorAll(".game-mode");
+
     hide.forEach(h => {
       h.style.display = "block";
-    });   
+    });
+
     let unHide = document.querySelectorAll(".pvc-mode");
+
     unHide.forEach(u => {
       u.style.display = "none";
     }); 
+
     WhichPlayer.style.display = "none";   
   });
 
@@ -1706,6 +1687,7 @@ const gameFlow = (() => {
         player2.mode = "peace";
         player1.mode = "war";
         player2.addPlayer.player2Board.hit = "";  
+
         if(AI === false) {
           setTimeout(() => {
             document.getElementById("board-w-coor").style.display = "grid";
@@ -1714,18 +1696,21 @@ const gameFlow = (() => {
           }, "1000");
           document.getElementById("next-pl-msg").style.display = "flex"; 
           videoOpacityAni("", "next-pl-msg");        
-        };      
+        };
+
         if(AI === true) {
           setTimeout(() => {
             moveAI(false);  
           }, "300");          
         };
+
       } else if (player1.addPlayer.player1Board.hit === false) {
         turn = "player2";
         player1.mode = "peace";
         player2.mode = "war";
         player1.addPlayer.player1Board.hit = "";        
         shots = player1.addPlayer.player1Board.shots;
+
         if(AI === false) {
           setTimeout(() => {
             document.getElementById("board-w-coor").style.display = "none";
@@ -1735,7 +1720,8 @@ const gameFlow = (() => {
           }, "1000");          
           document.getElementById("next-pl-msg").style.display = "flex";
           videoOpacityAni("", "next-pl-msg"); 
-        };             
+        }; 
+
       } else if (player2.addPlayer.player2Board.hit === true) {
         turn = "player1";
         player2.mode = "war";
@@ -1749,19 +1735,22 @@ const gameFlow = (() => {
         };
       };
     };   
-  };  
+  }; 
+
   //AI moves
   let AIMode = "hard";  
   let shotsMadeAI = [];
   let AIshipsSunk = [];
   let target = 4;
   let poss = [4, 3, 2, 1];
+
   const nextTarget = () => {
       let result = AIshipsSunk.filter(x => x == target);
       if(result.length == poss[target - 1]){     
         target -= 1;
       };
   }; 
+
   let shipSinking = false;
   let shipSinkingCoo = [];
   
@@ -1770,12 +1759,14 @@ const gameFlow = (() => {
       let last = shotsMadeAI[shotsMadeAI.length -1];
       let length = allCoo.length;
       let randomNum = Math.round(Math.random() * (length - 1));  
-      let shot = allCoo[randomNum];   
+      let shot = allCoo[randomNum];
+
       if(AIMode === "easy") {        
         if (length > 0) {
           player1.shoot().markShot(document.getElementById(shot));
         };
       };
+
       //AI hard mode     
       if(AIMode === "hard" && allCoo.length > 0) {
         let checkSunk = player1.addPlayer.player1Board.sunkSome;
@@ -1784,6 +1775,7 @@ const gameFlow = (() => {
         const filter = (coo) => {
           let filtered = coo;
           let res = [];
+
           if(hit == true || shipSinking == true) {           
             let lastCoo = shipSinkingCoo.sort(function(a, b){return a-b});
             if(lastCoo[lastCoo.length-1].toString()[1] == 0){              
@@ -1792,7 +1784,8 @@ const gameFlow = (() => {
             if(lastCoo[0].toString()[1] == 1) {              
               filtered = filtered.filter(x => x > lastCoo[0] || x <= (lastCoo[0] -10));              
             };           
-          };          
+          };
+
           filtered = filtered.filter(x => x > 0 && x < 101);                  
           for(let i = 0; allCoo.length > i; i++) {
             for (let j = 0; filtered.length > j; j++){
@@ -1800,7 +1793,8 @@ const gameFlow = (() => {
                 res.push(filtered[j]);
               };
             };
-          };          
+          }; 
+
           if(res.length === 0) {
             return shot;
           } else if (res.length === 1) {
@@ -1809,6 +1803,7 @@ const gameFlow = (() => {
             return res[Math.round(Math.random() * (res.length - 1))]
           };          
         };
+
         if(length === 100) {
           player1.shoot().markShot(document.getElementById(shot));
           shotsMadeAI.push(shot)
@@ -1853,8 +1848,7 @@ const gameFlow = (() => {
                 return res;
               })();          
               poss.push(shipSinkingCoo[0] - diff);
-              poss.push(shipSinkingCoo[length-1] + diff);
-              
+              poss.push(shipSinkingCoo[length-1] + diff);              
               let coor = filter(poss);
               player1.shoot().markShot(document.getElementById(coor));
               shotsMadeAI.push(coor); 
@@ -1872,6 +1866,7 @@ const gameFlow = (() => {
         };
       };      
   };
+
   const resetAI = () => {
     shotsMadeAI = [];
     AIshipsSunk = [];
@@ -1884,4 +1879,4 @@ const gameFlow = (() => {
  return {turnPl, removeAICoo, gameOver, allCoo};
 })();
 
-// document.getElementById("who-won").innerHTML = "PLAYER2<br>win!!"
+
