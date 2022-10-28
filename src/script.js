@@ -1255,6 +1255,7 @@ const gameFlow = (() => {
   let turn = "player1";
   let AI = false;
   let manualPlacement = true;
+  let nextPlayerTxt = document.getElementById("next-pl-msg");
   // let AIMode = "hard";  
   // let shotsMadeAI = [];
   // let AIshipsSunk = [];
@@ -1293,6 +1294,7 @@ const gameFlow = (() => {
   const backMainMenu = document.getElementById("returnMenuB");
   const easyMode = document.getElementById("PVC-easy");
   const hardMode = document.getElementById("PVC-hard");
+  const placeTheShips = document.getElementById("place-the-ships");
 
   // methods for buttons
   const zeroChoices = () => {    
@@ -1394,10 +1396,9 @@ const gameFlow = (() => {
         return "YOU<br>WIN!!!";
       } else if (AI === false && pl === "player1"){
         return "PLAYER2<br>WINS!!!";
-      } else if (AI === false && pl === "player2"){
+      } else if (AI === false && (pl === "player2" || pl === "AI")){
         return "PLAYER1<br>WINS!!!";
-      };
-     
+      };        
     })();   
     player2.mode = "peace";
     player1.mode = "peace";
@@ -1429,17 +1430,21 @@ const gameFlow = (() => {
         // pageapp.animate(appear, pageSplitTiming);
         // pageapp.style.position = "relative";
       // }     
-    };   
-    pagedisapp.animate(disappear, pageSplitTiming);    
+    };  
+    if (page != "") {
+      pagedisapp.animate(disappear, pageSplitTiming);
+    };        
     setTimeout(() => {
       if(ifSlide) {
         pageapp.style.position = "relative";
       }
-      pagedisapp.style.display = "none"; 
+      if(page != "") {
+       pagedisapp.style.display = "none"; 
+      };       
       if(removeTemp){
         hideTemp.style.display = "";
       };     
-    }, "1000");
+    }, "990");
   };
 
   // get coordinates when pvp mode
@@ -1479,6 +1484,7 @@ const gameFlow = (() => {
     // AI = true; 
     // turn = "player1";    
     // videoOpacityAni("front-page");   
+    placeTheShips.style.visibility = "visible";
   });
   easyMode.addEventListener("click", () => {
     if(!player1){
@@ -1509,7 +1515,8 @@ const gameFlow = (() => {
     WhichPlayer.style.display = "flex";
     WhichPlayer.innerHTML = `${turn} Setup`; 
     startGame.style.display = "none";
-    nextPlayer.style.display = "block";    
+    nextPlayer.style.display = "block"; 
+    placeTheShips.style.visibility = "visible";
   });
   backMenu.addEventListener("click", () => {
     frontPage.style.display = ""; 
@@ -1528,7 +1535,8 @@ const gameFlow = (() => {
     let unHide = document.querySelectorAll(".pvc-mode");
     unHide.forEach(u => {
       u.style.display = "none";
-    });        
+    }); 
+    WhichPlayer.style.display = "none";   
   });
   randomPlace.addEventListener("click", () => { 
     resetBoard();    
@@ -1579,12 +1587,20 @@ const gameFlow = (() => {
       addManualShips("player1", play1Coo);
       addManualShips("player2", play2Coo);
 
-      //background white for all the squares
-      play1Coo.forEach(c => {
-          for (let i = 0; c.length > i; i++) {
-            document.getElementById(c[i]).style.backgroundColor = "white";
-          }
-      }) 
+      //background white for all the squares      
+      
+       let toWhite = document.querySelectorAll(".square");
+       toWhite.forEach(t => {
+        t.style.backgroundColor = "white";
+       });
+      
+      // if(manualPlacement === false) {
+      //   play1Coo.forEach(c => {
+      //     for (let i = 0; c.length > i; i++) {
+      //       document.getElementById(c[i]).style.backgroundColor = "white";
+      //     };
+      //   }); 
+      // };      
       document.getElementById("place-the-ships").style.height = "100vh";
       document.getElementById("place-the-ships").style.alignContent = "center"
     };  
@@ -1609,6 +1625,7 @@ const gameFlow = (() => {
       document.getElementById("board-w-coor2").style.position = "static";
       WhichPlayer.innerHTML = `Player1 SHOOT!`;
     };    
+    // document.getElementById("body-battle-ship").style.backgroundColor = "navy";
   }); 
   let play1Coo = [];
   let play2Coo = [];  
@@ -1672,8 +1689,14 @@ const gameFlow = (() => {
     let unHide = document.querySelectorAll(".pvc-mode");
     unHide.forEach(u => {
       u.style.display = "none";
-    });    
+    }); 
+    WhichPlayer.style.display = "none";   
   });
+
+  nextPlayerTxt.addEventListener("click", () => {
+    document.getElementById("next-pl-msg").style.display = "none";
+  });
+
 
   //take turns to shoot  
   let turnPl = () => {   
@@ -1684,9 +1707,13 @@ const gameFlow = (() => {
         player1.mode = "war";
         player2.addPlayer.player2Board.hit = "";  
         if(AI === false) {
-          document.getElementById("board-w-coor").style.display = "grid";
-          document.getElementById("board-w-coor2").style.display = "none";
-          WhichPlayer.innerHTML = `Player2 SHOOT!`; 
+          setTimeout(() => {
+            document.getElementById("board-w-coor").style.display = "grid";
+            document.getElementById("board-w-coor2").style.display = "none";
+            WhichPlayer.innerHTML = `Player2 SHOOT!`;            
+          }, "1000");
+          document.getElementById("next-pl-msg").style.display = "flex"; 
+          videoOpacityAni("", "next-pl-msg");        
         };      
         if(AI === true) {
           setTimeout(() => {
@@ -1700,9 +1727,14 @@ const gameFlow = (() => {
         player1.addPlayer.player1Board.hit = "";        
         shots = player1.addPlayer.player1Board.shots;
         if(AI === false) {
-          document.getElementById("board-w-coor").style.display = "none";
-          document.getElementById("board-w-coor2").style.display = "grid";
-          WhichPlayer.innerHTML = `Player1 SHOOT!`; 
+          setTimeout(() => {
+            document.getElementById("board-w-coor").style.display = "none";
+            document.getElementById("board-w-coor2").style.display = "grid";
+            WhichPlayer.innerHTML = `Player1 SHOOT!`;
+            
+          }, "1000");          
+          document.getElementById("next-pl-msg").style.display = "flex";
+          videoOpacityAni("", "next-pl-msg"); 
         };             
       } else if (player2.addPlayer.player2Board.hit === true) {
         turn = "player1";

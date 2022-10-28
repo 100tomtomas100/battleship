@@ -4,11 +4,13 @@
     border: 0;  
     box-sizing: border-box;
     touch-action: manipulation;
+    font-family: 'Silkscreen', 'Alkalami', serif;
 }
 :root {
-    --box-size: 300px;
+    --box-size: calc(230px + 10vw);
 }
-body {     
+body {  
+    height: 100vh;   
     background-color: white;
     display: flex;
     justify-content: center;
@@ -17,6 +19,7 @@ body {
 }
 #place-the-ships {
     display: grid;    
+    visibility: hidden;
 }
 #board-w-coor{    
     display: grid;
@@ -72,6 +75,7 @@ body {
 }
 #ships-and-navigation{
     display: flex;
+    gap: 5%
 }
 #place-ships {
     height: calc(var(--box-size)/1.5);
@@ -87,7 +91,7 @@ body {
     align-items: center;
 }
 .ship-placement-button{
-    height: 50%;
+    height: 60%;
 }
 .shipChoice {
     display: flex;
@@ -148,6 +152,7 @@ body {
     font-weight: 800;
     background-color: navy;
     color: white;
+    font-size: 0.75em;
 }
 #start-button {
     opacity: 0.2;
@@ -197,15 +202,15 @@ body {
     color: rgb(1, 7, 82);
     text-shadow: 4px 4px white;
 }
-#bottom-part {      
-    position: relative;
-    
+#bottom-part { 
+    position: relative;  
 }
 #next-player {
     display: none;
     opacity: 0.2;
 }
 #player-name-wrapper {
+    grid-row: 1/2;
     height: 50px;
     width: 100%;
     font-family: 'Silkscreen', 'Alkalami', serif;
@@ -216,16 +221,66 @@ body {
     justify-content: center;
     align-items: center;   
 }
-@media only screen and (min-width: 600px) {
+#next-pl-msg {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    margin: auto;
+    z-index: 10;
+    background-color: navy;   
+    display: none;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+    text-justify: inter-character;
+    text-align: center;
+    font-weight: 800;
+    font-stretch: expanded;
+    line-height: 3;
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10+ */
+    user-select: none;
+}
+@media only screen and (min-width: 700px) {  
     #who-won {
         font-size: 8vw;
     }
     #returnMenuB {        
         height: 20%;
-    }   
+    }  
+    .game-mode {
+        width: 50%;
+    }    
+    #bottom-part {
+        height: calc(var(--box-size) + (var(--box-size)/5) - calc(var(--box-size)/ 30));        
+        position: relative;  
+        display: flex;
+        align-items: center;       
+    } 
+    #board-w-coor, #bottom-part {
+        grid-row: 2/3;
+    }
+    #place-the-ships {
+        height: 100vh;
+        width: 100%; 
+        display: grid;         
+        justify-content: center; 
+        align-items: center;    
+        grid-template-rows: 1fr, 9fr;      
+    }
+    #ships-and-navigation{
+        width: calc(var(--box-size) + 40px);        
+    }
+    #place-the-ships {        
+        gap: 10%;       
+    }
 }
 @media only screen and (min-width: 1190px) { 
     #intro-video-down, #intro-video-upper, #intro-video {
         width: 100%;
     }
+    .game-mode {
+        width: 30%
+    }
+    
 }
