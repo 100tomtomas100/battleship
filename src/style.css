@@ -130,7 +130,7 @@ body {
     align-items: center;
     gap: 10%;  
 }
-.game-mode {
+.game-mode, #returnMenuB {
     width: 80%;
     height: 50%;
     z-index: 1;
